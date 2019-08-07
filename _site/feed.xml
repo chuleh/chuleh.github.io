@@ -1,0 +1,1442 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-08-06T23:47:08-03:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">chule.io</title><subtitle>A DevOps Engineer Braindump</subtitle><author><name>chule</name><email>lcasarettom@gmail.com</email></author><entry><title type="html">Docker: Diving Deeper Into Dockerfile</title><link href="http://localhost:4000/Docker-diving-deeper-into-Dockerfile/" rel="alternate" type="text/html" title="Docker: Diving Deeper Into Dockerfile" /><published>2019-03-28T00:00:00-03:00</published><updated>2019-03-28T00:00:00-03:00</updated><id>http://localhost:4000/Docker:-diving-deeper-into-Dockerfile</id><content type="html" xml:base="http://localhost:4000/Docker-diving-deeper-into-Dockerfile/">&lt;p&gt;Hi, in today’s lecture we will continue with our &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; tutorial. In our &lt;a href=&quot;/Docker-what-is-a-Dockerfile/&quot;&gt;previous lecture&lt;/a&gt; we created a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; for our &lt;code class=&quot;highlighter-rouge&quot;&gt;redis-server&lt;/code&gt; and saw how to &lt;code class=&quot;highlighter-rouge&quot;&gt;build&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;run&lt;/code&gt; it.&lt;/p&gt;
+
+&lt;p&gt;Now, we’re going to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; web application that says &lt;code class=&quot;highlighter-rouge&quot;&gt;Hello world&lt;/code&gt;. It’s a simple web app, nothing too fancy as I don’t know much about &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt;, the point here is that you grasp the knowledge of how a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; is built.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-nodejs-web-app&quot;&gt;The node.js web app&lt;/h1&gt;
+&lt;p&gt;As always, I will work on my &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; directory and create a new one called &lt;code class=&quot;highlighter-rouge&quot;&gt;nodeapp&lt;/code&gt; and cd into it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~/docker [chuleh●] » mkdir nodeapp &amp;amp;&amp;amp; cd $_
+docker/nodeapp [chuleh●] »&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Inside of it, we will create three files. Two are for our &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app, the remaining one will be the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;. Let’s start with the web app. Open up your text editor and create a file called &lt;code class=&quot;highlighter-rouge&quot;&gt;package.json&lt;/code&gt;, and paste the following code:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;{
+  &quot;dependencies&quot;: {
+    &quot;express&quot;: &quot;*&quot;
+  },
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;node index.js&quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The second file is actually our web app. Create a new file called &lt;code class=&quot;highlighter-rouge&quot;&gt;index.js&lt;/code&gt; and paste this code:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;const express = require('express');
+
+const app = express();
+
+app.get('/', (req, res) =&amp;gt; {
+  res.send('Hello World');
+});
+
+app.listen(8080, () =&amp;gt; {
+  console.log('Listening on port 8080');
+});&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;That’s it, we now have the two needed files to run a web application that will return &lt;code class=&quot;highlighter-rouge&quot;&gt;Hello world&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;writing-the-dockerfile&quot;&gt;Writing the Dockerfile&lt;/h1&gt;
+&lt;p&gt;Now that we’ve got our &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app covered, it’s time to focus and what really matters, the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As with every single &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, the first line will be &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM&lt;/code&gt;. But in this case we’re going to do a little tweak, we will tell &lt;code class=&quot;highlighter-rouge&quot;&gt;Docker&lt;/code&gt; we want to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;node&lt;/code&gt; image, with the &lt;code class=&quot;highlighter-rouge&quot;&gt;alpine&lt;/code&gt; tag.
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Alpine&lt;/code&gt; in the docker world usually means that it is an image that comes installed with the bare minimum to run. It basically is the most lightweight possible image.&lt;/p&gt;
+
+&lt;p&gt;So the first line will look like this &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM node:alpine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now we need to &lt;code class=&quot;highlighter-rouge&quot;&gt;COPY&lt;/code&gt; our application into the container. Copy works just the same as the UNIX command so there’s nothing new here.&lt;/p&gt;
+
+&lt;p&gt;Type in &lt;code class=&quot;highlighter-rouge&quot;&gt;COPY ./ ./&lt;/code&gt;, this will copy everything from the relative path to the container.&lt;/p&gt;
+
+&lt;p&gt;Next we need to tell the image to install &lt;code class=&quot;highlighter-rouge&quot;&gt;node&lt;/code&gt;. So we’re going to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;RUN&lt;/code&gt; command, the one that replicates the shell command we would run.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;RUN npm install&lt;/code&gt; is the line that follows.&lt;/p&gt;
+
+&lt;p&gt;Finally, we need to tell our container what will be the command to execute when it starts.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CMD [&quot;npm&quot;, &quot;start&quot;]&lt;/code&gt; is the final line we will type.&lt;/p&gt;
+
+&lt;p&gt;So your &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; should look like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;FROM node:alpine
+
+COPY ./ ./
+
+RUN npm install
+
+CMD [&quot;npm&quot;, &quot;start&quot;]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;building-the-image&quot;&gt;Building the image&lt;/h1&gt;
+&lt;p&gt;The process is the same, now we have to build our image. For that we will run the &lt;code class=&quot;highlighter-rouge&quot;&gt;docker build&lt;/code&gt; command. Like I did in the previous lesson, I will tag the image with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-t&lt;/code&gt; flag.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nodeapp [chuleh●] » docker build -t chuleh/nodeapp .
+Sending build context to Docker daemon  4.096kB
+Step 1/4 : FROM node:alpine
+ ---&amp;gt; 09084e4ff58d
+Step 2/4 : COPY ./ ./
+ ---&amp;gt; 39ecd43407f4
+Step 3/4 : RUN npm install
+ ---&amp;gt; Running in 0b095f8d21f6
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN !invalid#2 No description
+npm WARN !invalid#2 No repository field.
+npm WARN !invalid#2 No license field.
+
+added 48 packages from 36 contributors and audited 121 packages in 2.35s
+found 0 vulnerabilities
+
+Removing intermediate container 0b095f8d21f6
+ ---&amp;gt; 4937fe21e8bd
+Step 4/4 : CMD [&quot;npm&quot;, &quot;start&quot;]
+ ---&amp;gt; Running in 8d9a47d434f7
+Removing intermediate container 8d9a47d434f7
+ ---&amp;gt; 4cc0fa9f67d9
+Successfully built 4cc0fa9f67d9
+Successfully tagged chuleh/nodeapp:latest&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Your output should be similar to mine. Pay no attention to the WARN lines. Those are related to the &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app, not to the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As usual I’ll double check if the image has been built with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image ls&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nodeapp [chuleh●] » docker image ls
+REPOSITORY            TAG                 IMAGE ID            CREATED              SIZE
+chuleh/nodeapp        latest              4cc0fa9f67d9        About a minute ago   78.3MB&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;running-the-container&quot;&gt;Running the container&lt;/h1&gt;
+&lt;p&gt;Now it’s time to run the container with the image we created. You already know how to do this, &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nodeapp [chuleh●] » docker container run chuleh/nodeapp
+
+&amp;gt; @ start /
+&amp;gt; node index.js
+
+Listening on port 8080&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The output on your end should be exactly the same as mine.&lt;/p&gt;
+
+&lt;h1 id=&quot;testing-the-app&quot;&gt;Testing the app&lt;/h1&gt;
+&lt;p&gt;So now that we’ve got our app running, we should be able to open a browser and go to &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost:8080&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; and get the &lt;code class=&quot;highlighter-rouge&quot;&gt;Hello World&lt;/code&gt; message, right? Well, &lt;strong&gt;no&lt;/strong&gt;. Let’s see what happens.&lt;/p&gt;
+
+&lt;p&gt;Open a new tab on your terminal and type &lt;code class=&quot;highlighter-rouge&quot;&gt;curl localhost:8080&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nodeapp [chuleh●] » curl localhost:8080
+curl: (7) Failed to connect to localhost port 8080: Connection refused&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You see the connection is refused.&lt;/p&gt;
+
+&lt;p&gt;What’s happening here? Well, &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; is making a request to our local network on port &lt;code class=&quot;highlighter-rouge&quot;&gt;8080&lt;/code&gt;, but there’s nothing running on our local machine on port &lt;code class=&quot;highlighter-rouge&quot;&gt;8080&lt;/code&gt;. &lt;a href=&quot;/Docker-port-forwarding/&quot;&gt;Just like we learned&lt;/a&gt;, we need to do some port-forwarding to our container.&lt;/p&gt;
+
+&lt;p&gt;Go back to the tab where your &lt;code class=&quot;highlighter-rouge&quot;&gt;node app&lt;/code&gt; is running and stop it with &lt;code class=&quot;highlighter-rouge&quot;&gt;ctrl-c&lt;/code&gt;. Now, we will run the container once again with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-p&lt;/code&gt; flag.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nodeapp [chuleh●] » docker container run -p 8080:8080 chuleh/nodeapp
+
+&amp;gt; @ start /
+&amp;gt; node index.js
+
+Listening on port 8080&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now open a new tab on your terminal and &lt;code class=&quot;highlighter-rouge&quot;&gt;curl localhost:8080&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nodeapp [chuleh●] » curl localhost:8080
+Hello World%&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And that’s it, we’ve got our &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; webapp running and docker is doing all the &lt;code class=&quot;highlighter-rouge&quot;&gt;port-forwarding&lt;/code&gt; for us.&lt;/p&gt;
+
+&lt;p&gt;As always, hack around the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; and stay tuned for in the next post we will dive even deeper. We’ll look at new commands and write the &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app that will connect with our &lt;code class=&quot;highlighter-rouge&quot;&gt;redis-server&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to build and run it.</summary></entry><entry><title type="html">Docker: What Is A Dockerfile</title><link href="http://localhost:4000/Docker-what-is-a-Dockerfile/" rel="alternate" type="text/html" title="Docker: What Is A Dockerfile" /><published>2019-03-25T00:00:00-03:00</published><updated>2019-03-25T00:00:00-03:00</updated><id>http://localhost:4000/Docker:-what-is-a-Dockerfile</id><content type="html" xml:base="http://localhost:4000/Docker-what-is-a-Dockerfile/">&lt;p&gt;Hi, in today’s post we’re going to take a look at something completely new: &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;. Until now we have been using community images that just worked, but when you’re going to use &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; in production, you’ll most likely want to run your own images. Here’s when the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; comes into play.
+But before diving any further into &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, let’s do a little recap about what we’ve learned.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-you-know-so-far&quot;&gt;What you know so far&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;By now you should know how to &lt;a href=&quot;/Docker-working-with-containers/&quot;&gt;start and stop containers&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Know how to &lt;a href=&quot;/Docker-working-with-containers/&quot;&gt;get a shell in a container&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Have a solid understanding of &lt;a href=&quot;/Docker-port-forwarding/&quot;&gt;port-forwarding and running containers detached&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Get the difference between a &lt;a href=&quot;/Docker-bind-mounts-and-volumes/&quot;&gt;bind mount and a volume&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I &lt;strong&gt;can’t stress&lt;/strong&gt; enough how important it is for you to have a solid understanding of the previous posts. Everything we’ve learned so far has been to create a solid foundation for what we’re going to learn today and the series of posts to come. That is &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;docker-compose&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;dockerfile&quot;&gt;Dockerfile&lt;/h1&gt;
+&lt;p&gt;So what’s a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;? It’s basically a plain text file that holds a configuration telling our container how it should behave. Through our &lt;code class=&quot;highlighter-rouge&quot;&gt;CLI&lt;/code&gt;, the &lt;code class=&quot;highlighter-rouge&quot;&gt;docker client&lt;/code&gt; will connect with the &lt;code class=&quot;highlighter-rouge&quot;&gt;docker server&lt;/code&gt;, the one that does all the heavy lifting for us. It will take the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, go through all the lines of configuration written inside of it and in return will build us a usable image.&lt;/p&gt;
+
+&lt;p&gt;Let’s take a look at the flow of a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;. First of all, notice how I always type &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, with a capital D. That’s how the file will be named, this is mandatory. You can change the name of it, but for now let’s stick to &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The main line of a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; will always be &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM&lt;/code&gt;. This is mandatory by &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt;. This is where we will specify the &lt;code class=&quot;highlighter-rouge&quot;&gt;base image&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then we will have other commands like &lt;code class=&quot;highlighter-rouge&quot;&gt;RUN&lt;/code&gt;. This is where you will build up the image you’re creating. The syntax for a &lt;code class=&quot;highlighter-rouge&quot;&gt;RUN&lt;/code&gt; instruction, is to type down the shell command.&lt;/p&gt;
+
+&lt;p&gt;We also have &lt;code class=&quot;highlighter-rouge&quot;&gt;COPY&lt;/code&gt;. As you may have guessed, this copies local files into the container.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CMD&lt;/code&gt; is to tell the image what command will run when it starts up. There can only be one &lt;code class=&quot;highlighter-rouge&quot;&gt;CMD&lt;/code&gt; in a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are several more commands inside a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, but for now let’s just stick to these:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;FROM&lt;/li&gt;
+  &lt;li&gt;COPY&lt;/li&gt;
+  &lt;li&gt;RUN&lt;/li&gt;
+  &lt;li&gt;CMD&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;writing-your-first-dockerfile&quot;&gt;Writing your first Dockerfile&lt;/h1&gt;
+&lt;p&gt;We’re going to write a &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; for &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app that will count hits on our website. For this, we will need a &lt;code class=&quot;highlighter-rouge&quot;&gt;redis-server&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app itself.
+In this first lesson we will only cover the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; for the &lt;code class=&quot;highlighter-rouge&quot;&gt;redis-server&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As usual, I will work on my &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; directory and create a new one called &lt;code class=&quot;highlighter-rouge&quot;&gt;visitor-counter&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;$ mkdir visitor-counter&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Inside we will create our &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;. As I explained before, the first line will be &lt;code class=&quot;highlighter-rouge&quot;&gt;FROM&lt;/code&gt;, specifying the base image we will use.
+In this case I won’t use &lt;code class=&quot;highlighter-rouge&quot;&gt;ubuntu&lt;/code&gt; as it’s too heavy, we will use &lt;code class=&quot;highlighter-rouge&quot;&gt;alpine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;FROM alpine&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now it’s time to &lt;code class=&quot;highlighter-rouge&quot;&gt;RUN&lt;/code&gt; the command to install &lt;code class=&quot;highlighter-rouge&quot;&gt;redis&lt;/code&gt;. As you may have guessed, we will type in &lt;code class=&quot;highlighter-rouge&quot;&gt;RUN&lt;/code&gt; and add a shell command from &lt;code class=&quot;highlighter-rouge&quot;&gt;alpine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;RUN apk add --update redis&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Finally, we will type &lt;code class=&quot;highlighter-rouge&quot;&gt;CMD&lt;/code&gt; instructing our &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; to run the &lt;code class=&quot;highlighter-rouge&quot;&gt;redis-server&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;CMD [&quot;redis-server&quot;]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Your file should look like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;FROM alpine
+
+RUN apk add --update redis
+
+CMD [&quot;redis-server&quot;]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;building-the-image&quot;&gt;Building the image&lt;/h1&gt;
+&lt;p&gt;So now we have our &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; ready. It’s time to build it. For this we’re going to run a new command, &lt;code class=&quot;highlighter-rouge&quot;&gt;docker build&lt;/code&gt;. I will also use the &lt;code class=&quot;highlighter-rouge&quot;&gt;-t&lt;/code&gt; flag to &lt;code class=&quot;highlighter-rouge&quot;&gt;tag&lt;/code&gt; the image with my &lt;code class=&quot;highlighter-rouge&quot;&gt;username/name-of-the-image&lt;/code&gt;. And finally we type a &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt;, a dot. Telling &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; we’ll build in the current directory.&lt;/p&gt;
+
+&lt;p&gt;A quick note, tagging the image is usually writen like this: &lt;code class=&quot;highlighter-rouge&quot;&gt;username/name-of-the-image:version&lt;/code&gt;. This is useful for when you have several images of the same service, but in my case I will just have one &lt;code class=&quot;highlighter-rouge&quot;&gt;redis-server&lt;/code&gt;.
+If you don’t specify the version, it will default to &lt;code class=&quot;highlighter-rouge&quot;&gt;latest&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/visitor-counter [chuleh●] » docker build -t chuleh/redis-server .
+Sending build context to Docker daemon  3.072kB
+Step 1/3 : FROM alpine
+ ---&amp;gt; 5cb3aa00f899
+Step 2/3 : RUN apk add --update redis
+ ---&amp;gt; Running in 1f1ce6c253e7
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/community/x86_64/APKINDEX.tar.gz
+(1/1) Installing redis (4.0.12-r0)
+Executing redis-4.0.12-r0.pre-install
+Executing redis-4.0.12-r0.post-install
+Executing busybox-1.29.3-r10.trigger
+OK: 7 MiB in 15 packages
+Removing intermediate container 1f1ce6c253e7
+ ---&amp;gt; 5dcdaa0db544
+Step 3/3 : CMD [&quot;redis-server&quot;]
+ ---&amp;gt; Running in 94611db3a24d
+Removing intermediate container 94611db3a24d
+ ---&amp;gt; e9a44d9ad7e6
+Successfully built e9a44d9ad7e6
+Successfully tagged chuleh/redis-server:latest&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If everything went correct, your output should be similar to mine. We can double check if the image has been built by typing &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image ls&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/visitor-counter [chuleh●] » docker image ls
+REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+chuleh/redis-server   latest              e9a44d9ad7e6        2 minutes ago       8.06MB&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;running-the-container&quot;&gt;Running the container&lt;/h1&gt;
+&lt;p&gt;Now, all that’s left is to run the container. We already know how to do that, &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;docker/visitor-counter &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh●] » docker container run chuleh/redis-server
+1:C 23 Mar 09:16:04.866 &lt;span class=&quot;c&quot;&gt;# oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo&lt;/span&gt;
+1:C 23 Mar 09:16:04.866 &lt;span class=&quot;c&quot;&gt;# Redis version=4.0.12, bits=64, commit=1be97168, modified=0, pid=1, just started&lt;/span&gt;
+1:C 23 Mar 09:16:04.866 &lt;span class=&quot;c&quot;&gt;# Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf&lt;/span&gt;
+1:M 23 Mar 09:16:04.868 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; Running &lt;span class=&quot;nv&quot;&gt;mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;standalone, &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;6379.
+1:M 23 Mar 09:16:04.868 &lt;span class=&quot;c&quot;&gt;# WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.&lt;/span&gt;
+1:M 23 Mar 09:16:04.868 &lt;span class=&quot;c&quot;&gt;# Server initialized&lt;/span&gt;
+1:M 23 Mar 09:16:04.868 &lt;span class=&quot;c&quot;&gt;# WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never &amp;gt; /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.&lt;/span&gt;
+1:M 23 Mar 09:16:04.868 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; Ready to accept connections&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Again, your output should be similar to mine. Pay attention to the last line, it says &lt;code class=&quot;highlighter-rouge&quot;&gt;Ready to accept connections&lt;/code&gt;. Meaning our container ran successfully.&lt;/p&gt;
+
+&lt;p&gt;That’ll be all for today’s lesson. Stay tuned cause in the next lecture we’re going to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;node.js&lt;/code&gt; app that will be the foundation for our next projects.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but when you’re going to use docker in production, you’ll most likely want to run your own images. Here’s when the Dockerfile comes into play. But before diving any further into Dockerfile, let’s do a little recap about what we’ve learned.</summary></entry><entry><title type="html">Docker: Bind Mounts And Volumes</title><link href="http://localhost:4000/Docker-bind-mounts-and-volumes/" rel="alternate" type="text/html" title="Docker: Bind Mounts And Volumes" /><published>2019-03-22T00:00:00-03:00</published><updated>2019-03-22T00:00:00-03:00</updated><id>http://localhost:4000/Docker:-bind-mounts-and-volumes</id><content type="html" xml:base="http://localhost:4000/Docker-bind-mounts-and-volumes/">&lt;p&gt;Hi, in today’s post we’re going to continue with our &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; series. If you’re new to &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; I suggest reading at least my &lt;a href=&quot;/intro-to-docker/&quot;&gt;Intro to Docker&lt;/a&gt;.
+In this lecture we’re going to talk about &lt;code class=&quot;highlighter-rouge&quot;&gt;bind mounts&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;volumes&lt;/code&gt;.
+We’re going to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; image from our &lt;a href=&quot;/Docker-port-forwarding/&quot;&gt;previous lesson&lt;/a&gt; and do stuff with it, so my recommendation is if you haven’t done that tutorial yet, go do it first.&lt;/p&gt;
+
+&lt;p&gt;What’s the point of of this? Well, &lt;code class=&quot;highlighter-rouge&quot;&gt;bind mounts&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;volumes&lt;/code&gt; are perfect for when you want to stop and delete containers without losing data.&lt;/p&gt;
+
+&lt;h1 id=&quot;bind-mounts&quot;&gt;Bind mounts&lt;/h1&gt;
+&lt;p&gt;A &lt;code class=&quot;highlighter-rouge&quot;&gt;bind mount&lt;/code&gt; is rather simple. It takes a host path, eg: &lt;code class=&quot;highlighter-rouge&quot;&gt;/data&lt;/code&gt; and mounts it inside your container, eg: &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/data&lt;/code&gt;.
+It is very simple and fast to use, the only downside is that you need to specify it at runtime. That means you need to specify it when you type our &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;p&gt;Let’s take a look at it. I’m going to work on my &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; directory from the previous lesson. By now you should already have your &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; image. If you’re like me that you regularly &lt;code class=&quot;highlighter-rouge&quot;&gt;prune&lt;/code&gt; your computer, just download it again with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker pull nginx&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+Digest: sha256:98efe605f61725fd817ea69521b0eeb32bef007af0e3d0aeb6258c6e6fe7fc1a
+Status: Image is up to date for nginx:latest&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Next, I will create a directory named &lt;code class=&quot;highlighter-rouge&quot;&gt;content&lt;/code&gt; where I will store a very basic &lt;code class=&quot;highlighter-rouge&quot;&gt;index.html&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » mkdir content
+docker/nginx [chuleh●] » cd content
+nginx/content [chuleh●] » echo &quot;Hello World&quot; &amp;gt; index.html&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now it’s time to run the container with our data, for this we’re going to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;-v&lt;/code&gt; flag when we run our &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container&lt;/code&gt;. Remember from the past lesson we need to specify the port with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-p&lt;/code&gt; flag and I will run it with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-d&lt;/code&gt; flag for it to run detached.&lt;/p&gt;
+
+&lt;p&gt;The command should look similar to this &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run -p 8080:80 -v /Users/chuleh/docker/nginx/content/:/usr/share/nginx/html:ro -d nginx&lt;/code&gt;.
+Of course, change the path to match the one on your end.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker container run -p 8080:80 -v /Users/chuleh/docker/nginx/content/:/usr/share/nginx/html:ro -d nginx
+b8d993a08c463e2fcc2e497ca8f54ec6e4087a0edd66f4e3ed9aaeb0ab3e2df3&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Also notice I typed &lt;code class=&quot;highlighter-rouge&quot;&gt;:ro&lt;/code&gt;, this is to make the volume &lt;code class=&quot;highlighter-rouge&quot;&gt;read-only&lt;/code&gt; making the container unable to edit the files on the host.&lt;/p&gt;
+
+&lt;p&gt;If everything went correctly, I should be able to &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; localhost and get the &lt;code class=&quot;highlighter-rouge&quot;&gt;Hello world&lt;/code&gt; message back.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » curl localhost:8080
+Hello World&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And that’s it, you’ve got a container running with your custom data. Now we can stop the container and the data will remain in our local directory.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+b8d993a08c46        nginx               &quot;nginx -g 'daemon of…&quot;   12 minutes ago      Up 12 minutes       0.0.0.0:8080-&amp;gt;80/tcp   dreamy_bohr
+docker/nginx [chuleh●] » docker stop b8d993a08c46
+b8d993a08c46&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;volumes&quot;&gt;Volumes&lt;/h1&gt;
+&lt;p&gt;Volumes are entities inside &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt;. We’re going to create a volume named &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; from the &lt;code class=&quot;highlighter-rouge&quot;&gt;cli&lt;/code&gt; with the following command: &lt;code class=&quot;highlighter-rouge&quot;&gt;docker volume create data&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker volume create data
+data&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You see &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; creates the &lt;code class=&quot;highlighter-rouge&quot;&gt;volume&lt;/code&gt; and outputs its name. If you paid attention, you’ll see we didn’t specify where the data is mounted on the host. Do not worry, we’re going to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;inspect&lt;/code&gt; command to have an in-depth look at the volume.
+Type &lt;code class=&quot;highlighter-rouge&quot;&gt;docker volume inspect data&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker volume inspect data
+[
+    {
+        &quot;CreatedAt&quot;: &quot;2019-03-22T18:03:07Z&quot;,
+        &quot;Driver&quot;: &quot;local&quot;,
+        &quot;Labels&quot;: {},
+        &quot;Mountpoint&quot;: &quot;/var/lib/docker/volumes/data/_data&quot;,
+        &quot;Name&quot;: &quot;data&quot;,
+        &quot;Options&quot;: {},
+        &quot;Scope&quot;: &quot;local&quot;
+    }
+]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We can see that the data is stored in &lt;code class=&quot;highlighter-rouge&quot;&gt;/var/lib/docker/volumes/data/_data&lt;/code&gt; on the host.&lt;/p&gt;
+
+&lt;p&gt;Now, we only need to run the container with the &lt;code class=&quot;highlighter-rouge&quot;&gt;-v&lt;/code&gt; flag again.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker container run -v data:/usr/share/nginx/html -p 8080:80 -d nginx
+312142394f02a7d5ce0949b49ed644eea7f95eed8ab116818cf2279c208d20bf&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Data is empty so there’s no point in doing a &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; to the localhost:8080 as it will return the default nginx index.html.&lt;/p&gt;
+
+&lt;h1 id=&quot;cleaning-up&quot;&gt;Cleaning up&lt;/h1&gt;
+&lt;p&gt;Stop your container with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker stop&lt;/code&gt;. Then we need to check the volumes that are scattered around with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker volume ls&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh●] » docker volume ls
+DRIVER              VOLUME NAME
+local               content
+local               data&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You can see I have two volumes. I can delete them with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker volume rm&lt;/code&gt; or I can &lt;code class=&quot;highlighter-rouge&quot;&gt;prune&lt;/code&gt; them with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker volume prune&lt;/code&gt;. In my case I will use &lt;code class=&quot;highlighter-rouge&quot;&gt;prune&lt;/code&gt; since I don’t care about these two volumes.&lt;/p&gt;
+
+&lt;h1 id=&quot;wrap-up&quot;&gt;Wrap up&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;-v /path/to/something:/path/in/container&lt;/code&gt; is a bind mount.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;-v path:/path/in/container&lt;/code&gt; is a volume.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And that’s pretty much it. Make sure you’re comfortable with this, play around with the commands for in the next lesson we’re going to take a more in-depth look at docker and &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;, allowing us to create our own images.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker. In this lecture we’re going to talk about bind mounts and volumes. We’re going to use the nginx image from our previous lesson and do stuff with it, so my recommendation is if you haven’t done that tutorial yet, go do it first.</summary></entry><entry><title type="html">Docker: Port Forwarding</title><link href="http://localhost:4000/Docker-port-forwarding/" rel="alternate" type="text/html" title="Docker: Port  Forwarding" /><published>2019-03-18T00:00:00-03:00</published><updated>2019-03-18T00:00:00-03:00</updated><id>http://localhost:4000/Docker:-port--forwarding</id><content type="html" xml:base="http://localhost:4000/Docker-port-forwarding/">&lt;p&gt;Hi, in today’s post we will continue where we left off with our &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; series. If you haven’t read the previous posts, I recommend doing so. There’s the &lt;a href=&quot;/intro-to-docker/&quot;&gt;Intro to Docker&lt;/a&gt; post and &lt;a href=&quot;/Docker-working-with-containers/&quot;&gt;Docker Part 2&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In part 3 we will talk about port-forwarding. We will create a basic webserver using the &lt;code class=&quot;highlighter-rouge&quot;&gt;Nginx&lt;/code&gt; image.&lt;/p&gt;
+
+&lt;h1 id=&quot;pulling-the-nginx-image&quot;&gt;Pulling the Nginx image&lt;/h1&gt;
+
+&lt;p&gt;First, let’s create an &lt;code class=&quot;highlighter-rouge&quot;&gt;Nginx&lt;/code&gt; directory where we are going to work and then pull the &lt;code class=&quot;highlighter-rouge&quot;&gt;Nginx&lt;/code&gt; image from the &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; hub.
+This may take some time depending on your connection, but it’s usually pretty fast.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~/docker [chuleh] » mkdir nginx
+~/docker [chuleh] » cd nginx
+docker/nginx [chuleh] » docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+f7e2b70d04ae: Pull complete
+08dd01e3f3ac: Pull complete
+d9ef3a1eb792: Pull complete
+Digest: sha256:98efe605f61725fd817ea69521b0eeb32bef007af0e3d0aeb6258c6e6fe7fc1a
+Status: Downloaded newer image for nginx:latest&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Your output should be similar to mine.&lt;/p&gt;
+
+&lt;h1 id=&quot;running-the-container&quot;&gt;Running the container&lt;/h1&gt;
+
+&lt;p&gt;Now it’s time to run the container. We’ve already covered how to do that, but in this case we’re going to add some extra flags. We’re going to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;-p&lt;/code&gt; flag to tell &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; we want to map the &lt;code class=&quot;highlighter-rouge&quot;&gt;host port&lt;/code&gt; to a &lt;code class=&quot;highlighter-rouge&quot;&gt;container port&lt;/code&gt;. Remember this: &lt;code class=&quot;highlighter-rouge&quot;&gt;host&lt;/code&gt; to the left, &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt; to the right.
+In my case, I’m going to map port &lt;code class=&quot;highlighter-rouge&quot;&gt;8080&lt;/code&gt; to port &lt;code class=&quot;highlighter-rouge&quot;&gt;80&lt;/code&gt;.
+Type in the following command &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run -p 8080:80 nginx&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker run -p 8080:80 nginx&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The container should be running now. Now open another &lt;code class=&quot;highlighter-rouge&quot;&gt;terminal&lt;/code&gt; or go to &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost:8080&lt;/code&gt; on your &lt;code class=&quot;highlighter-rouge&quot;&gt;browser&lt;/code&gt;.
+I will open another tab on my terminal and &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; the webserver.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~ » curl -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.15.9
+Date: Mon, 18 Mar 2019 15:00:22 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Tue, 26 Feb 2019 14:13:39 GMT
+Connection: keep-alive
+ETag: &quot;5c754993-264&quot;
+Accept-Ranges: bytes&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;I got a &lt;code class=&quot;highlighter-rouge&quot;&gt;200&lt;/code&gt;, which means that’s ok. The webserver is up. Now go back to your &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; tab, you should see the hit on your log.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker run -p 8080:80 nginx
+172.17.0.1 - - [18/Mar/2019:15:00:22 +0000] &quot;HEAD / HTTP/1.1&quot; 200 0 &quot;-&quot; &quot;curl/7.54.0&quot; &quot;-&quot;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Just to double check, I will run &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;. It will show the &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt; that’s running.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~ » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9bbbc3c3cbf1        nginx               &quot;nginx -g 'daemon of…&quot;   7 minutes ago       Up 7 minutes        0.0.0.0:8080-&amp;gt;80/tcp   boring_shaw&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now go back to the &lt;code class=&quot;highlighter-rouge&quot;&gt;Nginx&lt;/code&gt; tab and hit &lt;code class=&quot;highlighter-rouge&quot;&gt;ctrl-c&lt;/code&gt;. I will stop the container. Once again, let’s double check with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~ » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                     PORTS               NAMES
+9bbbc3c3cbf1        nginx               &quot;nginx -g 'daemon of…&quot;   10 minutes ago      Exited (0) 5 seconds ago                       boring_shaw&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;running-the-container-detached&quot;&gt;Running the container detached&lt;/h1&gt;
+
+&lt;p&gt;Running the container detached is a good way to free up some space in your &lt;code class=&quot;highlighter-rouge&quot;&gt;terminal&lt;/code&gt;. To do so, we will have to add another flag, in this case, the &lt;code class=&quot;highlighter-rouge&quot;&gt;-d&lt;/code&gt; flag, which tells docker to run &lt;code class=&quot;highlighter-rouge&quot;&gt;detached&lt;/code&gt;, meaning the container will run in the &lt;code class=&quot;highlighter-rouge&quot;&gt;background&lt;/code&gt;.
+Type in &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run -p 8080:80 -d nginx&lt;/code&gt;. It will print out the &lt;code class=&quot;highlighter-rouge&quot;&gt;container id&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker container run -p 8080:80 -d nginx
+5ae043c5d589e11a5e473e7a547128d964c7f01c9cc15bf9ca460481c8948c92&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Let’s check if it’s really running with a &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; or by going with your &lt;code class=&quot;highlighter-rouge&quot;&gt;browser&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;localhost:8080&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » curl -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.15.9
+Date: Mon, 18 Mar 2019 15:19:27 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Tue, 26 Feb 2019 14:13:39 GMT
+Connection: keep-alive
+ETag: &quot;5c754993-264&quot;
+Accept-Ranges: bytes&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We can also check it by running &lt;code class=&quot;highlighter-rouge&quot;&gt;docker containerls -a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS                  NAMES
+5ae043c5d589        nginx               &quot;nginx -g 'daemon of…&quot;   4 minutes ago       Up 4 minutes                0.0.0.0:8080-&amp;gt;80/tcp   peaceful_jang
+9bbbc3c3cbf1        nginx               &quot;nginx -g 'daemon of…&quot;   24 minutes ago      Exited (0) 13 minutes ago                          boring_shaw&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Your output should be similar to this. I’ve got the &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; container from the previous example &lt;code class=&quot;highlighter-rouge&quot;&gt;exited&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt; from this example &lt;code class=&quot;highlighter-rouge&quot;&gt;running&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;attaching-to-the-container&quot;&gt;Attaching to the container&lt;/h1&gt;
+&lt;p&gt;What now? Well, we’ve got our &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt; running, it’s time to attach to it and execute some commands.
+To attach to your container type &lt;code class=&quot;highlighter-rouge&quot;&gt;docker exec -i -t &amp;lt;container id&amp;gt; bash&lt;/code&gt; and you should be inside your container.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker exec -i -t 5ae043c5d589 bash
+root@5ae043c5d589:/#&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now we can run any commands inside our &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt;. Be mindful that since the containers come with the bare minimum installed, some commands may not be available unless you install the software. Type &lt;code class=&quot;highlighter-rouge&quot;&gt;exit&lt;/code&gt; or press &lt;code class=&quot;highlighter-rouge&quot;&gt;ctrl-d&lt;/code&gt; to exit the container.
+Now type in &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS                  NAMES
+9145872cf703        nginx               &quot;nginx -g 'daemon of…&quot;   2 minutes ago       Up 2 minutes                0.0.0.0:8080-&amp;gt;80/tcp   condescending_meninsky&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;As you can see, we exited the &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt; but it’s still running. Since we’re not going to use it anymore, let’s stop it with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container stop &amp;lt;container id&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker container stop 9145872cf703
+9145872cf703&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And double check it’s stopped with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;docker/nginx [chuleh] » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS               NAMES
+9145872cf703        nginx               &quot;nginx -g 'daemon of…&quot;   4 minutes ago       Exited (0) 4 seconds ago                        condescending_meninsky&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And that’s it for now. Stay tuned, in the next tutorial we will	 talk about &lt;code class=&quot;highlighter-rouge&quot;&gt;volumes&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;creating an image&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intro to Docker post and Docker Part 2.</summary></entry><entry><title type="html">Docker: Working With Containers</title><link href="http://localhost:4000/Docker-working-with-containers/" rel="alternate" type="text/html" title="Docker: Working With Containers" /><published>2019-02-21T00:00:00-03:00</published><updated>2019-02-21T00:00:00-03:00</updated><id>http://localhost:4000/Docker:-working-with-containers</id><content type="html" xml:base="http://localhost:4000/Docker-working-with-containers/">&lt;p&gt;Hi, in this post we’re continuing our series about &lt;code class=&quot;highlighter-rouge&quot;&gt;Docker&lt;/code&gt;, if you’re completely new to &lt;code class=&quot;highlighter-rouge&quot;&gt;Docker&lt;/code&gt;, I suggest reading my &lt;a href=&quot;/intro-to-docker/&quot;&gt;Intro to Docker&lt;/a&gt; where you will learn the very basics of &lt;code class=&quot;highlighter-rouge&quot;&gt;Docker&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Today we will learn about deletion of images, we will create a new container, mess it up and spin a new one in a matter of seconds.&lt;/p&gt;
+
+&lt;h1 id=&quot;starting-a-new-container&quot;&gt;Starting a new container&lt;/h1&gt;
+&lt;p&gt;If you followed my first lesson, you should already have the &lt;code class=&quot;highlighter-rouge&quot;&gt;Ubuntu&lt;/code&gt; image we pulled from the &lt;code class=&quot;highlighter-rouge&quot;&gt;Docker hub&lt;/code&gt;. Keep it, cause we’re going to use it now to create a new container.
+We’re going to run the new container interactively, we’re going to &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; it and then we’ll start a new container.
+Type &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run -i -t ubuntu bash&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container run &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; ubuntu bash
+root@a058c5234e4b:/#&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now it’s time to mess up the container. We’re going to &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -rf /&lt;/code&gt; and delete all of its contents. &lt;em&gt;MAKE SURE YOU’RE IN THE CONTAINER&lt;/em&gt; when typing this.
+Type &lt;code class=&quot;highlighter-rouge&quot;&gt;rm -rf / --no-preserve-root&lt;/code&gt; and you’ll mess up your container. You’ll see a lot of output while everything is being deleted.
+Just to make sure, try typing a few commands, you’ll see that they’re not found.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;root@a058c5234e4b:/# ls
+bash: /bin/ls: No such file or directory&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Good, now just exit the container with either &lt;code class=&quot;highlighter-rouge&quot;&gt;ctrl-d&lt;/code&gt; or by typing &lt;code class=&quot;highlighter-rouge&quot;&gt;exit&lt;/code&gt;.
+Let’s check our container exited with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                       PORTS               NAMES
+a058c5234e4b        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;              7 minutes ago       Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;127&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7 seconds ago                       silly_lumiere
+ad6759ec86c7        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;         9 minutes ago       Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 9 minutes ago                         musing_swanson&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;So far so good. Now let’s run another container based on the same image.
+Type &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run container -i -t ubuntu bash&lt;/code&gt;.  You should have a fresh new container working.
+Type in &lt;code class=&quot;highlighter-rouge&quot;&gt;ls -la&lt;/code&gt; and you should see everything ready to work again on your container.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container run &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; ubuntu bash
+root@8a6fe93f040b:/# &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-la&lt;/span&gt;
+total 72
+drwxr-xr-x   1 root root 4096 Feb 21 15:32 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxr-xr-x   1 root root 4096 Feb 21 15:32 ..
+&lt;span class=&quot;nt&quot;&gt;-rwxr-xr-x&lt;/span&gt;   1 root root    0 Feb 21 15:32 .dockerenv
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  360 Feb 21 15:32 dev
+drwxr-xr-x   1 root root 4096 Feb 21 15:32 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 183 root root    0 Feb 21 15:32 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 21 15:24 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;deleting-containers&quot;&gt;Deleting containers&lt;/h1&gt;
+&lt;p&gt;Our containers take up some space, it’s usually minimal, though. But they still do take some space so now it’s time to delete them.
+First let’s check the space they’re consuming with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a -s&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt;
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                        PORTS               NAMES               SIZE
+8a6fe93f040b        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;              8 minutes ago       Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 4 minutes ago                          amazing_pare        7B &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;virtual 88.1MB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+a058c5234e4b        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;              18 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;127&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 10 minutes ago                       silly_lumiere       0B &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;virtual 88.1MB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ad6759ec86c7        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;         20 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 20 minutes ago                         musing_swanson      0B &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;virtual 88.1MB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;So I’ve got 3 containers stopped. I will delete the first one with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container rm&lt;/code&gt;. The command can take either the &lt;code class=&quot;highlighter-rouge&quot;&gt;container id&lt;/code&gt; or the &lt;code class=&quot;highlighter-rouge&quot;&gt;container name&lt;/code&gt;. So we will delete it and then check again if the container has been deleted with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a -s&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;rm &lt;/span&gt;8a6fe93f040b
+8a6fe93f040b
+~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt;
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                        PORTS               NAMES               SIZE
+a058c5234e4b        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;              23 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;127&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 16 minutes ago                       silly_lumiere       0B &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;virtual 88.1MB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ad6759ec86c7        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;         25 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 25 minutes ago                         musing_swanson      0B &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;virtual 88.1MB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;You can also run containers with auto deletion adding the &lt;code class=&quot;highlighter-rouge&quot;&gt;--rm&lt;/code&gt; flag so they will be automatically removed after they exit.
+Type in &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run --rm -i -t ubuntu bash&lt;/code&gt; and type some command.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container run &lt;span class=&quot;nt&quot;&gt;--rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; ubuntu bash
+root@d3c6aad1b015:/# &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-la&lt;/span&gt;
+total 72
+drwxr-xr-x   1 root root 4096 Feb 21 16:07 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+drwxr-xr-x   1 root root 4096 Feb 21 16:07 ..
+&lt;span class=&quot;nt&quot;&gt;-rwxr-xr-x&lt;/span&gt;   1 root root    0 Feb 21 16:07 .dockerenv
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  360 Feb 21 16:07 dev
+drwxr-xr-x   1 root root 4096 Feb 21 16:07 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 181 root root    0 Feb 21 16:07 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 21 15:24 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;After exiting, type &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt; and the container shouldn’t be there.&lt;/p&gt;
+
+&lt;h1 id=&quot;deleting-images&quot;&gt;Deleting images&lt;/h1&gt;
+&lt;p&gt;Now it’s time to delete the images. Let’s check what images we have by running &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image ls&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~/docker [chuleh] » docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              47b19964fb50        2 weeks ago         88.1MB
+hello-world         latest              fce289e99eb9        7 weeks ago         1.84kB&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We can safely delete the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello-world&lt;/code&gt; image since we’re not going be using it anymore.
+Time to run &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image rm&lt;/code&gt;. Again, it can take &lt;code class=&quot;highlighter-rouge&quot;&gt;image id&lt;/code&gt; or the &lt;code class=&quot;highlighter-rouge&quot;&gt;image name&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker image &lt;span class=&quot;nb&quot;&gt;rm &lt;/span&gt;fce289e99eb9
+Untagged: hello-world:latest
+Untagged: hello-world@sha256:2557e3c07ed1e38f26e389462d03ed943586f744621577a99efb77324b0fe535
+Deleted: sha256:fce289e99eb9bca977dae136fbe2a82b6b7d4c372474c9235adc1741675f587e
+Deleted: sha256:af0b15c8625bb1938f1d7b17081031f649fd14e6b233688eea3c5483994a66a3&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Let’s check if it disappeared with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image ls&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-raw&quot; data-lang=&quot;raw&quot;&gt;~/docker [chuleh] » docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              47b19964fb50        2 weeks ago         88.1MB&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Perfect, the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello-world&lt;/code&gt; image is gone.&lt;/p&gt;
+
+&lt;h1 id=&quot;pruning&quot;&gt;Pruning&lt;/h1&gt;
+&lt;p&gt;Pruning is a good way for deleting several images or containers in one command.
+Let’s say we want to delete all the containers we’ve got on our system, you would run &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container prune&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;? &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;y/N] y
+Deleted Containers:
+a058c5234e4b19c45bfa7f346795ab32d5e72a33b74a68c1c0d9a55689b51337
+ad6759ec86c7f5a7ad66af4673f23e3651940ad1b455146b1341a6f7f9053d23
+
+Total reclaimed space: 0B
+~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;For images, you would run &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image prune&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;And if you want a total cleanup, you would run &lt;code class=&quot;highlighter-rouge&quot;&gt;docker system prune&lt;/code&gt;. That will delete images, containers, volumes, networks and so forth.&lt;/p&gt;
+
+&lt;p&gt;So that’s it for today, stay tuned cause in the next lesson we will take a more in-depth approach at images and port-forwarding.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the very basics of Docker.</summary></entry><entry><title type="html">Intro To Docker</title><link href="http://localhost:4000/intro-to-docker/" rel="alternate" type="text/html" title="Intro To Docker" /><published>2019-02-20T00:00:00-03:00</published><updated>2019-02-20T00:00:00-03:00</updated><id>http://localhost:4000/intro-to-docker</id><content type="html" xml:base="http://localhost:4000/intro-to-docker/">&lt;p&gt;Hi, in this post we’re going to learn about &lt;a href=&quot;https://www.docker.com/&quot; target=&quot;_blank&quot;&gt;Docker&lt;/a&gt; and containers.
+We’re going to install docker and work with the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello world&lt;/code&gt; example and learn some basic commands and terminology.&lt;/p&gt;
+
+&lt;h1 id=&quot;installing-docker&quot;&gt;Installing Docker&lt;/h1&gt;
+&lt;p&gt;Installing &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; is pretty straight-forward, although it may vary depending on which OS you’re on. I suggest going &lt;a href=&quot;https://docs.docker.com/install/&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt; and following the guide.&lt;/p&gt;
+
+&lt;h1 id=&quot;hello-world&quot;&gt;Hello World&lt;/h1&gt;
+&lt;p&gt;Let’s check that we have &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; running by checking the version:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » docker &lt;span class=&quot;nt&quot;&gt;--version&lt;/span&gt;
+Docker version 18.09.1, build 4c52b90&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Of course, the version might change, but you should get some output.
+Before going any further, let’s check two basic concepts:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Images&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;What’s an image? An image is the file system and configuration for our app, which is used to create containers.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Containers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;What’s a container? A container is a running instance of a &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt; image. They actually run the app. It contains an app and all of its dependencies.&lt;/p&gt;
+
+&lt;p&gt;Remember these two concepts, they are key to understanding images and containers.
+Now let’s get back on our terminal and run the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello-world&lt;/code&gt; example with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run hello-world&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » docker run hello-world
+Unable to find image &lt;span class=&quot;s1&quot;&gt;'hello-world:latest'&lt;/span&gt; locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull &lt;span class=&quot;nb&quot;&gt;complete
+&lt;/span&gt;Digest: sha256:2557e3c07ed1e38f26e389462d03ed943586f744621577a99efb77324b0fe535
+Status: Downloaded newer image &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the &lt;span class=&quot;s2&quot;&gt;&quot;hello-world&quot;&lt;/span&gt; image from the Docker Hub.
+    &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;amd64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Your output should be similar to the one above, if that’s so, it means your docker installation is working properly.
+Read the output, it’s actually very helpful, it lets you know what happened behind the scenes. &lt;code class=&quot;highlighter-rouge&quot;&gt;Docker daemon&lt;/code&gt; actually did a &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image pull&lt;/code&gt; to download the image and then it did a &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run&lt;/code&gt; to show you the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello-world&lt;/code&gt; output.&lt;/p&gt;
+
+&lt;p&gt;Try running &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run hello-world&lt;/code&gt; again. It should be faster since the &lt;code class=&quot;highlighter-rouge&quot;&gt;image&lt;/code&gt; has already been pulled.&lt;/p&gt;
+
+&lt;h1 id=&quot;pulling-your-first-image&quot;&gt;Pulling your first image&lt;/h1&gt;
+&lt;p&gt;Now that everything’s setup, it’s time to start hacking. Let’s pull an &lt;code class=&quot;highlighter-rouge&quot;&gt;Ubuntu&lt;/code&gt; image from the repos.&lt;/p&gt;
+
+&lt;p&gt;Run the following commmand &lt;code class=&quot;highlighter-rouge&quot;&gt;docker pull ubuntu&lt;/code&gt;.
+This will download the latest &lt;code class=&quot;highlighter-rouge&quot;&gt;image&lt;/code&gt; from the repos.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker pull ubuntu
+Using default tag: latest
+latest: Pulling from library/ubuntu
+Digest: sha256:7a47ccc3bbe8a451b500d2b53104868b46d60ee8f5b35a24b41a86077c650210
+Status: Downloaded newer image &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;ubuntu:latest&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now type &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image ls&lt;/code&gt;, you should see the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello-world&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;Ubuntu&lt;/code&gt; image.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker image &lt;span class=&quot;nb&quot;&gt;ls
+&lt;/span&gt;REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              47b19964fb50        2 weeks ago         88.1MB
+hello-world         latest              fce289e99eb9        7 weeks ago         1.84kB&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;creating-your-first-container&quot;&gt;Creating your first container&lt;/h1&gt;
+&lt;p&gt;Now we’re going to run a container based on this image.
+To do so, we’ll use the command &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run &amp;lt;container&amp;gt; &amp;lt;command&amp;gt;&lt;/code&gt;. Let’s list the contents of our container with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container run ubuntu ls -l&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container run ubuntu &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
+total 64
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  340 Feb 20 22:35 dev
+drwxr-xr-x   1 root root 4096 Feb 20 22:35 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 184 root root    0 Feb 20 22:35 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 20 22:35 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;So when you ran the &lt;code class=&quot;highlighter-rouge&quot;&gt;run&lt;/code&gt; command, believe it or not, a &lt;code class=&quot;highlighter-rouge&quot;&gt;container&lt;/code&gt; was created. The &lt;code class=&quot;highlighter-rouge&quot;&gt;docker daemon&lt;/code&gt; created the container and then ran the command inside of it, finally, the output is streamed through the &lt;code class=&quot;highlighter-rouge&quot;&gt;docker client&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s try something, run the following command &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls&lt;/code&gt;. This will list all your active containers:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls
+&lt;/span&gt;CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Ok, so what happened here? We created a container and listed the contents of it, however when we list the &lt;code class=&quot;highlighter-rouge&quot;&gt;containers&lt;/code&gt; the output shows none.
+This is not a bug, this is correct, the container ran with the command we gave it and then the process stopped.&lt;/p&gt;
+
+&lt;p&gt;Now let’s try &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;.
+This will show all of the containers we ran so far.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
+f69327766694        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;ls -l&quot;&lt;/span&gt;             4 minutes ago       Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 4 minutes ago                       elegant_bohr&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Notice the &lt;code class=&quot;highlighter-rouge&quot;&gt;STATUS&lt;/code&gt; column, it shows the containers just exited minutes ago.&lt;/p&gt;
+
+&lt;h1 id=&quot;run-containers-interactively&quot;&gt;Run containers interactively&lt;/h1&gt;
+&lt;p&gt;We can also run commands inside our container from the container’s &lt;code class=&quot;highlighter-rouge&quot;&gt;CLI&lt;/code&gt;.
+Try running &lt;code class=&quot;highlighter-rouge&quot;&gt;docker run -i -t ubuntu bash&lt;/code&gt;, this will open an interactive shell session within our container.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker run &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; ubuntu bash
+root@d3cdbc126cd4:/#&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Cool, now we can do lots of stuff inside our containers.
+Let’s create a &lt;code class=&quot;highlighter-rouge&quot;&gt;hello-world&lt;/code&gt; file and exit.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@d3cdbc126cd4:/# &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;hello world&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; hello-world
+root@d3cdbc126cd4:/# &lt;span class=&quot;nb&quot;&gt;exit
+exit&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;name-your-container&quot;&gt;Name your container&lt;/h1&gt;
+&lt;p&gt;As you may have noticed when running &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls&lt;/code&gt;, all containers have some funny name. This name is generated randomly by &lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt;.
+We can name our container with the &lt;code class=&quot;highlighter-rouge&quot;&gt;--name&lt;/code&gt; flag. I will name mine &lt;code class=&quot;highlighter-rouge&quot;&gt;ubuntu-test&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container run &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; ubuntu-test ubuntu &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
+total 64
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  340 Feb 20 23:09 dev
+drwxr-xr-x   1 root root 4096 Feb 20 23:09 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 183 root root    0 Feb 20 23:09 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 20 22:35 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And now let’s check it with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container ls -a&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/docker &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;chuleh] » docker container &lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                          PORTS               NAMES
+987ddbb75b46        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;ls -l&quot;&lt;/span&gt;             50 seconds ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 49 seconds ago                           ubuntu-test
+7dcca0aee2d3        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;              11 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; About a minute ago                       pensive_khorana
+d3cdbc126cd4        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;bash&quot;&lt;/span&gt;              16 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 13 minutes ago                           festive_robinson
+f69327766694        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;ls -l&quot;&lt;/span&gt;             35 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 35 minutes ago                           elegant_bohr
+43fa84ae8b90        ubuntu              &lt;span class=&quot;s2&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;         36 minutes ago      Exited &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 36 minutes ago                           modest_burnell&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;As you can see in the &lt;code class=&quot;highlighter-rouge&quot;&gt;NAMES&lt;/code&gt; column, the name of the container has been changed.&lt;/p&gt;
+
+&lt;p&gt;That’s it for today. Play around with &lt;code class=&quot;highlighter-rouge&quot;&gt;docker image&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;docker container&lt;/code&gt;, they’re your bread and butter and most likely the commands you will be using the most.&lt;/p&gt;
+
+&lt;p&gt;Stay tuned for in the next lesson we’ll be covering &lt;code class=&quot;highlighter-rouge&quot;&gt;deletion&lt;/code&gt; of images and containers.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in this post we’re going to learn about Docker and containers. We’re going to install docker and work with the hello world example and learn some basic commands and terminology.</summary></entry><entry><title type="html">Ansible Playbooks Decisions</title><link href="http://localhost:4000/ansible-playbooks-decisions/" rel="alternate" type="text/html" title="Ansible Playbooks Decisions" /><published>2018-12-16T00:00:00-03:00</published><updated>2018-12-16T00:00:00-03:00</updated><id>http://localhost:4000/ansible-playbooks-decisions</id><content type="html" xml:base="http://localhost:4000/ansible-playbooks-decisions/">&lt;p&gt;Hi, in this post we’re going to take a deeper look into &lt;code class=&quot;highlighter-rouge&quot;&gt;playbooks&lt;/code&gt;. In our previous posts we covered our &lt;a href=&quot;/ansible-playbooks/&quot;&gt;intro to playbooks&lt;/a&gt;,
+where we learned how to create simple &lt;code class=&quot;highlighter-rouge&quot;&gt;playbooks&lt;/code&gt; and our &lt;code class=&quot;highlighter-rouge&quot;&gt;inventory&lt;/code&gt;. In our &lt;a href=&quot;/ansible-playbooks-templates-and-variables/&quot;&gt;second post&lt;/a&gt; we learned about &lt;code class=&quot;highlighter-rouge&quot;&gt;templates&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;variables&lt;/code&gt;
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt;. We went over how my website is configured and took a look at its &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, in the last post I said we were going to tell &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; how to make decisions, for that, we’re going to spin up 2 &lt;code class=&quot;highlighter-rouge&quot;&gt;vms&lt;/code&gt;. One with &lt;code class=&quot;highlighter-rouge&quot;&gt;CentOS&lt;/code&gt; and another one with &lt;code class=&quot;highlighter-rouge&quot;&gt;Ubuntu&lt;/code&gt;.
+&lt;!--more--&gt;
+For this, we’re going to use &lt;code class=&quot;highlighter-rouge&quot;&gt;Vagrant&lt;/code&gt;. I have already covered in &lt;a href=&quot;/intro-to-vagrant/&quot;&gt;previous posts&lt;/a&gt; how to set up &lt;code class=&quot;highlighter-rouge&quot;&gt;vms&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;Vagrant&lt;/code&gt;.
+These two &lt;code class=&quot;highlighter-rouge&quot;&gt;vms&lt;/code&gt; already have configured the user I will run &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; with. In today’s post we’re going to install &lt;code class=&quot;highlighter-rouge&quot;&gt;Apache&lt;/code&gt;. As you may know, in &lt;code class=&quot;highlighter-rouge&quot;&gt;CentOS&lt;/code&gt; this package is called &lt;code class=&quot;highlighter-rouge&quot;&gt;httpd&lt;/code&gt;
+whereas in &lt;code class=&quot;highlighter-rouge&quot;&gt;Debian&lt;/code&gt; related distros, this is called &lt;code class=&quot;highlighter-rouge&quot;&gt;apache2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;playbook&quot;&gt;Playbook&lt;/h1&gt;
+&lt;p&gt;Now we’re going to create the structure in which we’re going to work. I will &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; into my &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/&lt;/code&gt; directory and create the following directories: &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt;.
+This is going to be a very basic example showing you just how to install &lt;code class=&quot;highlighter-rouge&quot;&gt;apache&lt;/code&gt;, it won’t include any &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /tmp
+/tmp » &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; roles/apache/&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;tasks,vars&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;tasks&quot;&gt;Tasks&lt;/h1&gt;
+&lt;p&gt;If you’ve followed my previous tutorials, you’ll know here is where we’re going to create the main file which is going to orchestrate our run.
+For this, we’re going to use the built-in variable &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible_os_family&lt;/code&gt;. Remember it is a &lt;code class=&quot;highlighter-rouge&quot;&gt;variable&lt;/code&gt;, so it’ll go between curly braces. The &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; can be anything you want.
+I just like to put simple names to it so I’ll name it &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible receiving variables&lt;/code&gt;. So far, your file should look like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Ansible receiving variables&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;include_vars&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;{{ansible_os_family}}.yml&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now we’ll use the &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; directive. Telling ansible we’re going to include two files which will be located in our &lt;code class=&quot;highlighter-rouge&quot;&gt;files&lt;/code&gt;directory.
+Once again, &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; is smart enough to know where to look for the files. We’ll also use the &lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt; statement, telling &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible&lt;/code&gt; that this the &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; will happen when the &lt;code class=&quot;highlighter-rouge&quot;&gt;when&lt;/code&gt; criteria
+is met.
+Your file should look something like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Ansible receiving variables&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;include_vars&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;{{ansible_os_family}}.yml&quot;&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;include&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;debian_apache_install.yml&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;when&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ansible_os_family == &quot;Debian&quot;&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;include&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;rhel_apache_install.yml&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;when&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ansible_os_family == &quot;RedHat&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;include-files&quot;&gt;Include files&lt;/h1&gt;
+&lt;p&gt;Now it’s time to create the two &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; files. I will start with &lt;code class=&quot;highlighter-rouge&quot;&gt;debian_apache_install.yml&lt;/code&gt;. These two files are included inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Install debian packages&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;name={{ item }} state=present&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;with_items&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;{{&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;deb_packages&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;}}&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This should be pretty legible to you if you’ve been following my tutorials.
+We’re calling the &lt;code class=&quot;highlighter-rouge&quot;&gt;items&lt;/code&gt; variable and I have created the &lt;code class=&quot;highlighter-rouge&quot;&gt;deb_packages&lt;/code&gt; variable which we will define later in the &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;Now it’s time to create the &lt;code class=&quot;highlighter-rouge&quot;&gt;rhel_apache_install.yml&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Install RHEL packages&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;yum&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;name={{ item }} state=present&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;with_items&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;{{&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;rhel_packages&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;}}&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;var&quot;&gt;Var&lt;/h1&gt;
+&lt;p&gt;We have created the &lt;code class=&quot;highlighter-rouge&quot;&gt;include&lt;/code&gt; files in the previous section, now it’s time to create the &lt;code class=&quot;highlighter-rouge&quot;&gt;var&lt;/code&gt; files. &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; into the &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt; directory and let’s start hacking.
+We’re going to create three files: &lt;code class=&quot;highlighter-rouge&quot;&gt;Debian.yml&lt;/code&gt;  and &lt;code class=&quot;highlighter-rouge&quot;&gt;RedHat.yml&lt;/code&gt;, the two we defined in our main &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt; file. And we also need to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt;, which will be empty.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with the easy one. Your &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt; is going to be empty, so just type the three dashes inside of it.
+It’s gonna look just like this&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;apache/vars » &lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;main.yml
+&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Easy, just type in the three dashes and close the file.&lt;/p&gt;
+
+&lt;p&gt;Now we have to create the &lt;code class=&quot;highlighter-rouge&quot;&gt;Debian.yml&lt;/code&gt; file. Inside, it will have the variable we defined previously and the package we want to install. Since it’s debian, it will be &lt;code class=&quot;highlighter-rouge&quot;&gt;apache2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;deb_packages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;apache2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;It’s the RHEL file turn. Since this is RedHat, the package name will be &lt;code class=&quot;highlighter-rouge&quot;&gt;httpd&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;rhel_packages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;httpd&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;run-the-playbook&quot;&gt;Run the playbook&lt;/h1&gt;
+&lt;p&gt;Now it’s time to run the playbook. I already have my &lt;code class=&quot;highlighter-rouge&quot;&gt;inventory&lt;/code&gt; created. This file includes the &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tags&lt;/code&gt;I will use to run &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-playbook&lt;/code&gt;. I will not explain it, since
+I’ve already covered this &lt;a href=&quot;/ansible-playbooks/&quot;&gt;here&lt;/a&gt;.
+Let’s take a look at the run.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;tmp » ansible-playbook site.yml &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; vagrant &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; apache
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;...]
+PLAY &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;vagrant] &lt;span class=&quot;k&quot;&gt;*********************************************************************************************************************************************************************************************&lt;/span&gt;
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Gathering Facts] &lt;span class=&quot;k&quot;&gt;*************************************************************************************************************************************************************************************&lt;/span&gt;
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver3]
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1]
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;apache : Ansible receiving variables] &lt;span class=&quot;k&quot;&gt;****************************************************************************************************************************************************************&lt;/span&gt;
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1]
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver3]
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;apache : Install debian packages] &lt;span class=&quot;k&quot;&gt;********************************************************************************************************************************************************************&lt;/span&gt;
+skipping: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver3]
+changed: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1] &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=[&lt;/span&gt;u&lt;span class=&quot;s1&quot;&gt;'apache2'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;apache : Install RHEL packages] &lt;span class=&quot;k&quot;&gt;**********************************************************************************************************************************************************************&lt;/span&gt;
+skipping: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1]
+changed: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver3] &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=[&lt;/span&gt;u&lt;span class=&quot;s1&quot;&gt;'httpd'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+
+PLAY RECAP &lt;span class=&quot;k&quot;&gt;*************************************************************************************************************************************************************************************************&lt;/span&gt;
+webserver1                 : &lt;span class=&quot;nv&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3    &lt;span class=&quot;nv&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1    &lt;span class=&quot;nv&quot;&gt;unreachable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0    &lt;span class=&quot;nv&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+webserver3                 : &lt;span class=&quot;nv&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3    &lt;span class=&quot;nv&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1    &lt;span class=&quot;nv&quot;&gt;unreachable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0    &lt;span class=&quot;nv&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;As you can see, it skips &lt;code class=&quot;highlighter-rouge&quot;&gt;webserver3&lt;/code&gt; when it runs the &lt;code class=&quot;highlighter-rouge&quot;&gt;Install debian packages&lt;/code&gt; part of the play and installs &lt;code class=&quot;highlighter-rouge&quot;&gt;apache2&lt;/code&gt; on &lt;code class=&quot;highlighter-rouge&quot;&gt;webserver1&lt;/code&gt;.
+Then, it skips &lt;code class=&quot;highlighter-rouge&quot;&gt;webserver1&lt;/code&gt; and installs &lt;code class=&quot;highlighter-rouge&quot;&gt;httpd&lt;/code&gt; on &lt;code class=&quot;highlighter-rouge&quot;&gt;webserver3&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This playbook should give you a solid foundation on how &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; works when it has to make decisions. This playbook will also work if you rename it and add more packages, as for example &lt;code class=&quot;highlighter-rouge&quot;&gt;BIND&lt;/code&gt;
+which has different names depending on the distro you’re running. Hack around and play with it.&lt;/p&gt;
+
+&lt;p&gt;Stay tuned, next playbook we’ll see an example for a client I’m working with which includes &lt;code class=&quot;highlighter-rouge&quot;&gt;files&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in this post we’re going to take a deeper look into playbooks. In our previous posts we covered our intro to playbooks, where we learned how to create simple playbooks and our inventory. In our second post we learned about templates, variables and handlers. We went over how my website is configured and took a look at its template.</summary></entry><entry><title type="html">Ansible Playbooks Templates And Variables</title><link href="http://localhost:4000/ansible-playbooks-templates-and-variables/" rel="alternate" type="text/html" title="Ansible Playbooks Templates And Variables" /><published>2018-06-27T00:00:00-03:00</published><updated>2018-06-27T00:00:00-03:00</updated><id>http://localhost:4000/ansible-playbooks-templates-and-variables</id><content type="html" xml:base="http://localhost:4000/ansible-playbooks-templates-and-variables/">&lt;p&gt;Hi, in this post we will continue with our &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible playbooks&lt;/code&gt; tutorials. We’ll continue from our last lesson, that was the &lt;a href=&quot;/ansible-playbooks/&quot;&gt;intro to playbooks&lt;/a&gt;. If you haven’t read that one yet, I suggest you go and read it before moving any further with this one
+since most of the content we’re going to see is related to the previous post.&lt;/p&gt;
+
+&lt;p&gt;So, in the last post I said we were going to cover to &lt;code class=&quot;highlighter-rouge&quot;&gt;templates&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt; and that’s what we’re going to do.
+&lt;!--more--&gt;
+In today’s post we’ll see:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Templates&lt;/li&gt;
+  &lt;li&gt;Vars&lt;/li&gt;
+  &lt;li&gt;Handlers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;main-role&quot;&gt;Main role&lt;/h1&gt;
+&lt;p&gt;Let’s continue from our &lt;a href=&quot;/ansible-playbooks/&quot;&gt;previous post&lt;/a&gt;. I suggest you check it out if you haven’t yet, cause we’re going to do stuff covered already there. For today’s example I’ll be using  the config file for my own website. We’re going to create a new &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt; called &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt;. In this role, we’re going to install &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt;, create the configuration file for the site, create a symbolic link from &lt;code class=&quot;highlighter-rouge&quot;&gt;sites-available&lt;/code&gt; directory to &lt;code class=&quot;highlighter-rouge&quot;&gt;sites-enabled&lt;/code&gt; and finally &lt;code class=&quot;highlighter-rouge&quot;&gt;restart&lt;/code&gt; nginx.
+Of course, we’re going to do all of this adding new stuff. We will be using &lt;code class=&quot;highlighter-rouge&quot;&gt;templates&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;variables&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;But let’s not get ahead of ourselves, let’s start with the &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt;. Inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; directory, let’s create a &lt;code class=&quot;highlighter-rouge&quot;&gt;templates&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt; directory. If you haven’t created the &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; directory, do it now. I will do all of this in my &lt;code class=&quot;highlighter-rouge&quot;&gt;tmp&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;/tmp » &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; nginx/&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;tasks,templates,handlers,vars&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now, &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; into our &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt; directory and let’s create the &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt; file for nginx:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;run apt-get update&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;update_cache&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;yes&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;cache_valid_time&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3600&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;install nginx&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;present&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;create config for site&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;lcasaretto.com.j2&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/etc/nginx/sites-available/{{ site.name }}&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;symlink new site to sites-enabled/&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/etc/nginx/sites-available/{{ site.name }}&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/etc/nginx/sites-enabled/{{ site.name }}&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;link&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;check nginx config&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx -t&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;restart nginx&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Everything should be pretty straightforward so far, until we hit the line where it says &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt;. See it? That’s how you declare a template. Let’s take a deeper look into it.&lt;/p&gt;
+
+&lt;h1 id=&quot;templates&quot;&gt;Templates&lt;/h1&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Templates&lt;/code&gt; is an ansible module that allows us to use our own text files, like config files, and replace them on the destination server.
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Templates&lt;/code&gt; are processed by the &lt;code class=&quot;highlighter-rouge&quot;&gt;Jinja2&lt;/code&gt; formatting language, meaning that this opens a whole scenario of variables that we can pass to our templates.
+So, to declare a template file, you just type down &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt;, the &lt;code class=&quot;highlighter-rouge&quot;&gt;source&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;destination&lt;/code&gt; on the remote server. Ansible is smart and will look for our template file in our &lt;code class=&quot;highlighter-rouge&quot;&gt;templates&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;If you paid attention, you’ll see that it also says &lt;code class=&quot;highlighter-rouge&quot;&gt;{{ site.name }}&lt;/code&gt;, that’s a variable and we’ll cover it later.
+As I said starting today’s post, I’ll be using my own website for today’s example. So I’ll create a file called &lt;code class=&quot;highlighter-rouge&quot;&gt;lcasaretto.com.j2&lt;/code&gt;. Pay attention to the &lt;code class=&quot;highlighter-rouge&quot;&gt;j2&lt;/code&gt; extension, that’s our &lt;code class=&quot;highlighter-rouge&quot;&gt;Jinja2&lt;/code&gt; template file.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;server {
+  listen 80;
+  server_name {{ site.name }} {{ site.serveralias }};
+  root {{ site.rootdir }};
+  access_log  /var/log/nginx/{{ site.name }}-access.log;
+  error_log  /var/log/nginx/{{ site.name }}-error.log;
+
+  gzip             on;
+  gzip_comp_level  3;
+  gzip_types       text/html text/plain text/css image/*;
+
+}&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;So that’s the configuration file for my website. Let’s break it down a little bit. It says that it’s going to listen on port 80. The &lt;code class=&quot;highlighter-rouge&quot;&gt;server_name&lt;/code&gt;
+has two variables: &lt;code class=&quot;highlighter-rouge&quot;&gt;{{ site.name }} {{ site.serveralias }}&lt;/code&gt; which we will cover next. The same goes for &lt;code class=&quot;highlighter-rouge&quot;&gt;access&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;error&lt;/code&gt; log.&lt;/p&gt;
+
+&lt;h1 id=&quot;variables&quot;&gt;Variables&lt;/h1&gt;
+&lt;p&gt;Now it’s time to cover the &lt;code class=&quot;highlighter-rouge&quot;&gt;variables&lt;/code&gt;. Variables are just that, &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt;, pieces of text that can be reused making your automation easier.
+Remember we created the &lt;code class=&quot;highlighter-rouge&quot;&gt;vars&lt;/code&gt; directory? &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; into it and create a &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt; file which will contain all of our variables.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;na&quot;&gt;site&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;lcasaretto.com&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;serveralias&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;www.lcasaretto.com&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;rootdir&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/mnt/efs/lcasaretto.com/_site/&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;As you can see, the file starts with &lt;code class=&quot;highlighter-rouge&quot;&gt;site:&lt;/code&gt;. Why? Because the vars we named started with &lt;code class=&quot;highlighter-rouge&quot;&gt;site.variable&lt;/code&gt;. So we have the &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;serveralias&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;rootdir&lt;/code&gt; variables defined, which are the ones we were calling earlier in our &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;h1 id=&quot;handlers&quot;&gt;Handlers&lt;/h1&gt;
+&lt;p&gt;Now it’s time to create the &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt; file. So what’s a &lt;code class=&quot;highlighter-rouge&quot;&gt;handler&lt;/code&gt;? It’s like regular task, but it only happens when there’s a &lt;code class=&quot;highlighter-rouge&quot;&gt;notify&lt;/code&gt; directive in the playbook.
+We have already created the &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt; directory, &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; into it and create a &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;restart nginx&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;restarted&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If you go &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks/main.yml&lt;/code&gt; you’ll see that our last line has a &lt;code class=&quot;highlighter-rouge&quot;&gt;notify&lt;/code&gt; calling this &lt;code class=&quot;highlighter-rouge&quot;&gt;handler&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now, all that remains is running &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-playbook&lt;/code&gt;. In my case, it will return &lt;code class=&quot;highlighter-rouge&quot;&gt;ok&lt;/code&gt; on some stuff because &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; is already installed, and the configuration files are present, as well. Also, I already have &lt;code class=&quot;highlighter-rouge&quot;&gt;lcasaretto1&lt;/code&gt;  defined in my &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/ansible/hosts&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;s&quot;&gt;» ansible-playbook site.yml -l lcasaretto1 -t nginx&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;PLAY [lcasaretto] ******************************************************************************************************************************************************************************************&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;TASK [Gathering Facts] *************************************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;TASK [nginx&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;run apt-get update] **************************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;TASK [nginx&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;install nginx] *******************************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;TASK [nginx&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;create config for site] **********************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;TASK [nginx&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;symlink new site to sites-enabled/] **********************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;TASK [nginx&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;check nginx config] **************************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;RUNNING HANDLER [nginx&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;restart nginx] ********************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;lcasaretto1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;PLAY RECAP *************************************************************************************************************************************************************************************************&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;lcasaretto1                &lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ok=7    changed=3    unreachable=0    failed=0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;So that’s pretty much everything, make sure you go by each of the steps carefully and slowly since we have covered a lot of stuff.
+Stay tuned for the next post, in which we’ll cover how to make decisions with ansible.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in this post we will continue with our ansible playbooks tutorials. We’ll continue from our last lesson, that was the intro to playbooks. If you haven’t read that one yet, I suggest you go and read it before moving any further with this one since most of the content we’re going to see is related to the previous post.</summary></entry><entry><title type="html">Ansible Playbooks</title><link href="http://localhost:4000/ansible-playbooks/" rel="alternate" type="text/html" title="Ansible Playbooks" /><published>2018-06-18T00:00:00-03:00</published><updated>2018-06-18T00:00:00-03:00</updated><id>http://localhost:4000/ansible-playbooks</id><content type="html" xml:base="http://localhost:4000/ansible-playbooks/">&lt;p&gt;Hi, in this post we will take a more in-depth look at &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible playbooks&lt;/code&gt;. We’re going to continue from from where we left off in our &lt;a href=&quot;/intro-to-ansible/&quot;&gt;intro to ansible&lt;/a&gt;. If you haven’t checked that post yet, I suggest you go and read it before moving any further with this one.&lt;/p&gt;
+
+&lt;p&gt;In today’s post we’re going to write a &lt;code class=&quot;highlighter-rouge&quot;&gt;playbook&lt;/code&gt; as in the previous session, but we will enhance it. Rather than running it as a single playbook, we’re going to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;yml&lt;/code&gt; file with all our hosts and run the &lt;code class=&quot;highlighter-rouge&quot;&gt;playbook&lt;/code&gt; as a &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt;.
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;For today’s lesson, I will be running 3 &lt;code class=&quot;highlighter-rouge&quot;&gt;vms&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;ubuntu&lt;/code&gt;. The same ones from our &lt;a href=&quot;/intro-to-vagrant/&quot;&gt;vagrant&lt;/a&gt; post.
+They’re already set up with my user and password, and I’m already included in the &lt;code class=&quot;highlighter-rouge&quot;&gt;sudoers&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;p&gt;Let’s get our hands dirty. We’re going to learn to:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Edit our inventory&lt;/li&gt;
+  &lt;li&gt;Create a role&lt;/li&gt;
+  &lt;li&gt;Create a main includer for our hosts file&lt;/li&gt;
+  &lt;li&gt;Running our playbook&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;editing-the-inventory&quot;&gt;Editing the inventory&lt;/h1&gt;
+&lt;p&gt;Open up your terminal and edit your &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/ansible/hosts&lt;/code&gt; file. You should already have this file if you followed my previous &lt;a href=&quot;/intro-to-ansible/&quot;&gt;ansible&lt;/a&gt; post.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/ansible/hosts&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Next, I’m going to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;group&lt;/code&gt; inside our inventory. I will name it &lt;code class=&quot;highlighter-rouge&quot;&gt;[home]&lt;/code&gt; and add my &lt;code class=&quot;highlighter-rouge&quot;&gt;webservers&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;database&lt;/code&gt; to it. I will use the &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible_host&lt;/code&gt; next to each of them, to specify the &lt;code class=&quot;highlighter-rouge&quot;&gt;ip address&lt;/code&gt;. Your file should look something like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[home]
+webserver1  ansible_host=192.168.0.20
+webserver2  ansible_host=192.168.0.30
+dbserver  ansible_host=192.168.0.40
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Of course, change the &lt;code class=&quot;highlighter-rouge&quot;&gt;ip&lt;/code&gt; address to match the ones you’re using&lt;/p&gt;
+
+&lt;p&gt;To check that all the &lt;code class=&quot;highlighter-rouge&quot;&gt;vms&lt;/code&gt; are responding, I’ll just ping the &lt;code class=&quot;highlighter-rouge&quot;&gt;group&lt;/code&gt; now, instead of each of the &lt;code class=&quot;highlighter-rouge&quot;&gt;vms&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » ansible home &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; ping
+webserver1 | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;ping&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;pong&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+webserver2 | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;ping&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;pong&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+dbserver | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;ping&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;pong&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Cool, right? Now we can run &lt;code class=&quot;highlighter-rouge&quot;&gt;ad-hoc&lt;/code&gt; commands to the group and &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible&lt;/code&gt; will know what we’re talking about.&lt;/p&gt;
+
+&lt;h1 id=&quot;creating-a-role&quot;&gt;Creating a role&lt;/h1&gt;
+&lt;p&gt;What is a &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt;? Let’s see what &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible&lt;/code&gt; says: Roles are ways of automatically loading certain vars_files, tasks, and handlers based on a known file structure. Ok, what does this mean? First it means that roles need a known &lt;strong&gt;file structure&lt;/strong&gt;. That would be, of course, the &lt;code class=&quot;highlighter-rouge&quot;&gt;roles&lt;/code&gt; directory, which is our today’s topic.
+So, as usual, let’s create a &lt;code class=&quot;highlighter-rouge&quot;&gt;test&lt;/code&gt; directory and inside we will create a &lt;code class=&quot;highlighter-rouge&quot;&gt;roles&lt;/code&gt; directory. Finally, we will &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; into it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;/roles
+~ » &lt;span class=&quot;nb&quot;&gt;cd test&lt;/span&gt;/roles
+&lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;/roles »&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now, we will create our new role. Let’s try something different, let’s create a role that will install the apps that don’t come by default in &lt;code class=&quot;highlighter-rouge&quot;&gt;ubuntu&lt;/code&gt;. I will call this role &lt;code class=&quot;highlighter-rouge&quot;&gt;apps&lt;/code&gt;, so I will create the &lt;code class=&quot;highlighter-rouge&quot;&gt;apps&lt;/code&gt; directory. Remember the definition said it needed a &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt; in their file structure? Well, we’ll also create a &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt; directory, and inside of it we will create our playbook, which has to be named &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt;. Let’s do it.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;/roles » &lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; apps/tasks &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$_&lt;/span&gt;
+apps/tasks » vim main.yml&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now it’s time to start hacking, inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;main.yml&lt;/code&gt; we will write our playbook. As with every &lt;code class=&quot;highlighter-rouge&quot;&gt;yaml&lt;/code&gt; file, it will start with &lt;strong&gt;three dashes&lt;/strong&gt;. Then we will give our task a &lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt;, in my case I want to run &lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get update&lt;/code&gt; if it’s been more than an hour. It should look something like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;run apt-get update&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;update_cache=yes cache_valid_time=3600&lt;/span&gt;
+  &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;See that we haven’ defined &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;become&lt;/code&gt; in our &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt; like we did with our &lt;code class=&quot;highlighter-rouge&quot;&gt;apache2&lt;/code&gt; playbook. That’s because we’re going to do it in our next step, when we create our main includer.&lt;/p&gt;
+
+&lt;p&gt;Now it’s time to install the apps, for this we will use the &lt;code class=&quot;highlighter-rouge&quot;&gt;apt&lt;/code&gt; module and call the &lt;code class=&quot;highlighter-rouge&quot;&gt;item&lt;/code&gt; variable. Next, we will define &lt;code class=&quot;highlighter-rouge&quot;&gt;with_items&lt;/code&gt; that are going to be the &lt;code class=&quot;highlighter-rouge&quot;&gt;apps&lt;/code&gt; that will fill our &lt;code class=&quot;highlighter-rouge&quot;&gt;item&lt;/code&gt; variable. The playbook, should look something like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;install apps&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;name={{ item }} state=present&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;with_items&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;screen&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;rsync&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;htop&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;iotop&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Mind the &lt;code class=&quot;highlighter-rouge&quot;&gt;curly braces&lt;/code&gt; when you type it, otherwise it will fail. Our complete playbook should look like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;run apt-get update&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;update_cache=yes cache_valid_time=3600&lt;/span&gt;
+
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;install apps&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;name={{ item }} state=present&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;with_items&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;screen&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;rsync&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;htop&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;iotop&lt;/span&gt;
+ &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We have successfully created our first role! Now it’s time to run it.&lt;/p&gt;
+
+&lt;h1 id=&quot;creating-the-main-includer-file&quot;&gt;Creating the main includer file&lt;/h1&gt;
+&lt;p&gt;Why haven’t we included the &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; directive or the &lt;code class=&quot;highlighter-rouge&quot;&gt;become&lt;/code&gt; in our playbook? That’s because we’re not hardcoding anything into it. This means that we can use the same role in other hosts we might have in our inventory and it will just work! This is known as &lt;code class=&quot;highlighter-rouge&quot;&gt;reusable&lt;/code&gt; code.&lt;/p&gt;
+
+&lt;p&gt;Now it’s time to run our &lt;code class=&quot;highlighter-rouge&quot;&gt;playbook&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt; we specified. For this, we’re going to create a file where we will specify the &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; and the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;tags&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;cd&lt;/code&gt; back to the test directory and create a new &lt;code class=&quot;highlighter-rouge&quot;&gt;yml&lt;/code&gt; file. I will call it &lt;code class=&quot;highlighter-rouge&quot;&gt;test.yml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;apps/tasks » &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ../../..
+~/test » vim test.yml&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We’ll start with our &lt;strong&gt;three dashes&lt;/strong&gt; and start typing our &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt;, this has to be the same name you defined in your inventory. And we will tell ansible we want to become &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;become&lt;/code&gt; directive:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;home&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;become&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;True&lt;/span&gt;
+  &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now here is where the magic happens, let’s define our &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tag&lt;/code&gt;. We will type &lt;code class=&quot;highlighter-rouge&quot;&gt;roles:&lt;/code&gt;, press &lt;code class=&quot;highlighter-rouge&quot;&gt;enter&lt;/code&gt; and define our role. This is a list, so &lt;strong&gt;be careful&lt;/strong&gt; with the indentation:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;  &lt;span class=&quot;na&quot;&gt;roles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;role&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;apps&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;apps'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}&lt;/span&gt;
+    &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;See how I defined our role &lt;code class=&quot;highlighter-rouge&quot;&gt;apps&lt;/code&gt;? That’s the role we just created. The &lt;code class=&quot;highlighter-rouge&quot;&gt;tag&lt;/code&gt; I used was the same as the &lt;code class=&quot;highlighter-rouge&quot;&gt;role&lt;/code&gt; name, but it could’ve been anything you wanted. Let me show you, I will add another &lt;code class=&quot;highlighter-rouge&quot;&gt;tag&lt;/code&gt; and call it &lt;code class=&quot;highlighter-rouge&quot;&gt;watermelon&lt;/code&gt;.
+So this is is what my includer file looks like:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;home&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;become&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;True&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;roles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;role&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;apps&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;apps'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;watermelon'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;}&lt;/span&gt;
+    &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;running-our-playbook&quot;&gt;Running our playbook&lt;/h1&gt;
+&lt;p&gt;Now it’s time to run our playbook. We will use &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-playbook&lt;/code&gt; command followed by &lt;code class=&quot;highlighter-rouge&quot;&gt;test.yml&lt;/code&gt; which is our main includer file with all the hosts. Then we will use the &lt;code class=&quot;highlighter-rouge&quot;&gt;-l&lt;/code&gt; flag which means &lt;code class=&quot;highlighter-rouge&quot;&gt;limit&lt;/code&gt;, saying that we want to specify the &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; that will be affected by our playbook and the &lt;code class=&quot;highlighter-rouge&quot;&gt;-t&lt;/code&gt; flag, which stands for &lt;code class=&quot;highlighter-rouge&quot;&gt;tag&lt;/code&gt;. Remember I tagged it as &lt;code class=&quot;highlighter-rouge&quot;&gt;watermelon&lt;/code&gt;? I’m going to run it like that.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/test » ansible-playbook test.yml &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; home &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; watermelon
+
+PLAY &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;home] &lt;span class=&quot;k&quot;&gt;************************************************************************************************************************************************************************************************&lt;/span&gt;
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Gathering Facts] &lt;span class=&quot;k&quot;&gt;*************************************************************************************************************************************************************************************&lt;/span&gt;
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1]
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver2]
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;dbserver]
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;apps : run apt-get update] &lt;span class=&quot;k&quot;&gt;***************************************************************************************************************************************************************************&lt;/span&gt;
+changed: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver2]
+changed: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;dbserver]
+changed: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1]
+
+TASK &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;apps : &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;apps] &lt;span class=&quot;k&quot;&gt;*********************************************************************************************************************************************************************************&lt;/span&gt;
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver1] &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=[&lt;/span&gt;u&lt;span class=&quot;s1&quot;&gt;'screen'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'rsync'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'htop'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'iotop'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;webserver2] &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=[&lt;/span&gt;u&lt;span class=&quot;s1&quot;&gt;'screen'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'rsync'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'htop'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'iotop'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+ok: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;dbserver] &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=[&lt;/span&gt;u&lt;span class=&quot;s1&quot;&gt;'screen'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'rsync'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'htop'&lt;/span&gt;, u&lt;span class=&quot;s1&quot;&gt;'iotop'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+
+PLAY RECAP &lt;span class=&quot;k&quot;&gt;*************************************************************************************************************************************************************************************************&lt;/span&gt;
+dbserver                   : &lt;span class=&quot;nv&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3    &lt;span class=&quot;nv&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1    &lt;span class=&quot;nv&quot;&gt;unreachable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0    &lt;span class=&quot;nv&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+webserver1                 : &lt;span class=&quot;nv&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3    &lt;span class=&quot;nv&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1    &lt;span class=&quot;nv&quot;&gt;unreachable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0    &lt;span class=&quot;nv&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+webserver2                 : &lt;span class=&quot;nv&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3    &lt;span class=&quot;nv&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1    &lt;span class=&quot;nv&quot;&gt;unreachable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0    &lt;span class=&quot;nv&quot;&gt;failed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0ç&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Perfect! &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; ran without flaws. In my case the apps were already installed, so nothing’s changed.&lt;/p&gt;
+
+&lt;p&gt;Now in this way we can specify the &lt;code class=&quot;highlighter-rouge&quot;&gt;-l&lt;/code&gt; flag and affect only the resource we want. Go ahead and give it a shot, try running &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-playbook test.yml -l webserver1 -t apps&lt;/code&gt; and see what happens. I will only affect &lt;code class=&quot;highlighter-rouge&quot;&gt;webserver1&lt;/code&gt; leaving &lt;code class=&quot;highlighter-rouge&quot;&gt;webserver2&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;dbserver&lt;/code&gt; untouched.&lt;/p&gt;
+
+&lt;p&gt;This has been a long post and we’ve gone through a lot of new stuff, so make sure to understand everything we wrote. Create new &lt;code class=&quot;highlighter-rouge&quot;&gt;roles&lt;/code&gt;, add new &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;inventory&lt;/code&gt;, play with &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible&lt;/code&gt;, that’s the best way to learn.&lt;/p&gt;
+
+&lt;p&gt;Hope you enjoyed it, stay tuned cause in the next session we will learn about &lt;code class=&quot;highlighter-rouge&quot;&gt;templates&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;handlers&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in this post we will take a more in-depth look at Ansible playbooks. We’re going to continue from from where we left off in our intro to ansible. If you haven’t checked that post yet, I suggest you go and read it before moving any further with this one.</summary></entry><entry><title type="html">Intro To Ansible</title><link href="http://localhost:4000/intro-to-ansible/" rel="alternate" type="text/html" title="Intro To Ansible" /><published>2018-06-15T00:00:00-03:00</published><updated>2018-06-15T00:00:00-03:00</updated><id>http://localhost:4000/intro-to-ansible</id><content type="html" xml:base="http://localhost:4000/intro-to-ansible/">&lt;p&gt;Hi, in this post we’re going to talk about &lt;a href=&quot;https://www.ansible.com/&quot; target=&quot;_blank&quot;&gt;Ansible&lt;/a&gt;. So, what’s &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt;?
+Well, as the website says, &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; is an IT orchestration engine that automates configuration management, application
+deployment and many other IT needs. What does this mean? This means that the days of logging via &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh&lt;/code&gt; into servers to
+install and configure them are gone! Through &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; we will be able to install all of our apps, configure our files
+ and do all sorts of tasks we can think of.
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;Today we’re going to learn how to:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Setting up the host VM&lt;/li&gt;
+  &lt;li&gt;Install Ansible&lt;/li&gt;
+  &lt;li&gt;Run ad-hoc commands&lt;/li&gt;
+  &lt;li&gt;Create a simple playbook&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;installing-ansible&quot;&gt;Installing Ansible&lt;/h1&gt;
+&lt;p&gt;We’re going to cover how to install &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; on &lt;code class=&quot;highlighter-rouge&quot;&gt;GNU\Linux&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;macOS&lt;/code&gt;.&lt;/p&gt;
+&lt;h5 id=&quot;centos&quot;&gt;Centos&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;ansible &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;fedora&quot;&gt;Fedora&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;dnf &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;ansible &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;ubuntu&quot;&gt;Ubuntu&lt;/h5&gt;
+&lt;p&gt;Ubuntu is a bit trickier but don’t worry, I got you covered. We’re going to install it through &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; PPA’s.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;software-properties-common &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-add-repository ppa:ansible/ansible
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;ansible &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;debian&quot;&gt;Debian&lt;/h5&gt;
+&lt;p&gt;On Debian you need to edit your &lt;code class=&quot;highlighter-rouge&quot;&gt;sources.list&lt;/code&gt;. Type the following:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/apt/sources.list&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And add the following to your &lt;code class=&quot;highlighter-rouge&quot;&gt;sources.list&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And then type following:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-key adv &lt;span class=&quot;nt&quot;&gt;--keyserver&lt;/span&gt; keyserver.ubuntu.com &lt;span class=&quot;nt&quot;&gt;--recv-keys&lt;/span&gt; 93C4A3FD7BB9C367
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;ansible &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;macos&quot;&gt;macOS&lt;/h5&gt;
+&lt;p&gt;On macOS it is recommended to install it via &lt;code class=&quot;highlighter-rouge&quot;&gt;pip&lt;/code&gt;. Make sure you have &lt;code class=&quot;highlighter-rouge&quot;&gt;pip&lt;/code&gt; installed by typing &lt;code class=&quot;highlighter-rouge&quot;&gt;which pip&lt;/code&gt;. If you don’t have &lt;code class=&quot;highlighter-rouge&quot;&gt;pip&lt;/code&gt; installed, just type:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;easy_install pip&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And once &lt;code class=&quot;highlighter-rouge&quot;&gt;pip&lt;/code&gt; is installed, type the following:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;ansible&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;setting-up-the-host-vm&quot;&gt;Setting up the host VM&lt;/h1&gt;
+&lt;p&gt;A few things before we start. The &lt;code class=&quot;highlighter-rouge&quot;&gt;host&lt;/code&gt; server &lt;strong&gt;must&lt;/strong&gt; have &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; installed, otherwise &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; will fail. For
+this tutorial I’m going to run an &lt;code class=&quot;highlighter-rouge&quot;&gt;Ubuntu vm&lt;/code&gt; following my &lt;a href=&quot;/intro-to-vagrant/&quot;&gt;intro to vagrant&lt;/a&gt;
+post, so &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt; is already installed and it already has a &lt;code class=&quot;highlighter-rouge&quot;&gt;static ip&lt;/code&gt;. Also, I have already created a new user inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;
+which is the one I will be using for this post. If you haven’t done any of these two, either &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant ssh&lt;/code&gt; into your &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; and install &lt;code class=&quot;highlighter-rouge&quot;&gt;Python&lt;/code&gt;
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;adduser&lt;/code&gt; your new user or follow &lt;a href=&quot;/intro-to-vagrant/&quot;&gt;this tutorial&lt;/a&gt;. This new user &lt;strong&gt;must&lt;/strong&gt; be in the sudoers file with permissions to run sudo without asking for password. I’ll cover this quickly below if you haven’t done it yet, &lt;code class=&quot;highlighter-rouge&quot;&gt;vagrant ssh&lt;/code&gt; into your new &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;. Then &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo -i&lt;/code&gt; to become &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt;. Afterwards &lt;code class=&quot;highlighter-rouge&quot;&gt;adduser &amp;lt;username&amp;gt;&lt;/code&gt; and create the new &lt;code class=&quot;highlighter-rouge&quot;&gt;user&lt;/code&gt;. Type &lt;code class=&quot;highlighter-rouge&quot;&gt;adduser &amp;lt;username&amp;gt; sudo&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;visudo&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;vagrant/ubuntu64 &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;vag-chuleh●] » vagrant ssh
+vagrant@vagrant-ubuntu-trusty-64:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt;
+root@vagrant-ubuntu-trusty-64:~# adduser chuleh
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;...]
+Is the information correct? &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Y/n] y
+root@vagrant-ubuntu-trusty-64:~# adduser chuleh &lt;span class=&quot;nb&quot;&gt;sudo
+&lt;/span&gt;Adding user &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;chuleh&lt;span class=&quot;s1&quot;&gt;' to group `sudo'&lt;/span&gt; ...
+Adding user chuleh to group &lt;span class=&quot;nb&quot;&gt;sudo
+&lt;/span&gt;Done.
+root@vagrant-ubuntu-trusty-64:~# visudo&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Inside your &lt;code class=&quot;highlighter-rouge&quot;&gt;sudoers&lt;/code&gt; file, scroll down to the line where we have the group &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo&lt;/code&gt; and change it so the line looks like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) NOPASSWD:ALL
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Good, now we’re all set up to run &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now it’s time to tell &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; about this host &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt;.
+ Let’s edit or create the following file: &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/ansible/hosts&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt; &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;vim /etc/ansible/hosts
+ &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And lets add our &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;. Mine, in the previous post was named &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx_vm&lt;/code&gt;, so I’ll just name it the same in &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; file.
+ It should look something like this&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; nginx_vm  ansible_host=192.168.0.50
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Finally, &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-copy-id&lt;/code&gt; you &lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-key&lt;/code&gt; to the &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » ssh-copy-id &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; chuleh@192.168.0.50
+/usr/bin/ssh-copy-id: INFO: Source of key&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; to be installed: &lt;span class=&quot;s2&quot;&gt;&quot;/Users/chuleh/.ssh/id_rsa.pub&quot;&lt;/span&gt;
+/usr/bin/ssh-copy-id: INFO: attempting to log &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;with the new key&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; remain to be installed &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;you are prompted now it is to &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;the new keys
+chuleh@192.168.0.50&lt;span class=&quot;s1&quot;&gt;'s password:
+
+Number of key(s) added:        1
+
+Now try logging into the machine, with:   &quot;ssh '&lt;/span&gt;chuleh@192.168.0.50&lt;span class=&quot;s1&quot;&gt;'&quot;
+and check to make sure that only the key(s) you wanted were added.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Doing all of that was a pain, wasn’t it? Well, those days are gone with &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt;. Let’s check some &lt;code class=&quot;highlighter-rouge&quot;&gt;ad-hoc commands&lt;/code&gt; before moving onto &lt;code class=&quot;highlighter-rouge&quot;&gt;playbooks&lt;/code&gt; for automation.&lt;/p&gt;
+
+&lt;h1 id=&quot;ad-hoc-commands&quot;&gt;Ad-hoc commands&lt;/h1&gt;
+&lt;p&gt;What are &lt;code class=&quot;highlighter-rouge&quot;&gt;ad-hoc&lt;/code&gt; commands? They’re commands you run once and you forget about them. These are used for doing tasks on the remote &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; from your &lt;code class=&quot;highlighter-rouge&quot;&gt;cli&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The syntax is as follows: &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible &amp;lt;host&amp;gt; -m &amp;lt;module&amp;gt; -a &quot;&amp;lt;arguments&amp;gt;&quot;&lt;/code&gt;.
+Let’s see an example. In the following, I will ping the &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; to see if it’s online:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » ansible nginx_vm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; ping
+nginx_vm | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;ping&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;pong&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Cool! The &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; is responding to our ping. We used the &lt;code class=&quot;highlighter-rouge&quot;&gt;ping module&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; replied back to us. Now how about doing some more fun stuff. Let’s install &lt;code class=&quot;highlighter-rouge&quot;&gt;apache&lt;/code&gt; on the remote &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;. For this, we’re going to use the &lt;code class=&quot;highlighter-rouge&quot;&gt;apt&lt;/code&gt; module. If your &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; is running &lt;code class=&quot;highlighter-rouge&quot;&gt;CentOS&lt;/code&gt;, you can use the &lt;code class=&quot;highlighter-rouge&quot;&gt;yum&lt;/code&gt; module.
+Since this &lt;code class=&quot;highlighter-rouge&quot;&gt;module&lt;/code&gt; requires &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; privileges, we will use the &lt;code class=&quot;highlighter-rouge&quot;&gt;--become&lt;/code&gt; option.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » ansible nginx_vm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; apt &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name=nginx state=present&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--become&lt;/span&gt;
+nginx_vm | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;cache_update_time&quot;&lt;/span&gt;: 1528839938,
+    &lt;span class=&quot;s2&quot;&gt;&quot;cache_updated&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;stderr&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;stderr_lines&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt;,
+
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;...]&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;I changed my mind. Let’s remove &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; and install &lt;code class=&quot;highlighter-rouge&quot;&gt;Apache&lt;/code&gt;. For this, we will tell the &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; we want &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; to be &lt;code class=&quot;highlighter-rouge&quot;&gt;stopped&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;service&lt;/code&gt; module. And then we will tell the &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt; we want it &lt;code class=&quot;highlighter-rouge&quot;&gt;absent&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » ansible nginx_vm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; service &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name=nginx state=stopped&quot;&lt;/span&gt;
+nginx_vm | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;nginx&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;state&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;stopped&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+~ » ansible nginx_vm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; apt &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name=nginx state=absent&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--become&lt;/span&gt;
+nginx_vm | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;stderr&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;stderr_lines&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt;,
+
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;...]
+
+~ » ansible nginx_vm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; apt &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name=apache2 state=present&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--become&lt;/span&gt;
+nginx_vm | SUCCESS &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;cache_update_time&quot;&lt;/span&gt;: 1528839938,
+    &lt;span class=&quot;s2&quot;&gt;&quot;cache_updated&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;changed&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
+
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;...]
+   &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Let’s check if this is true by running &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt; against our &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » curl &lt;span class=&quot;nt&quot;&gt;-I&lt;/span&gt; 192.168.0.50
+HTTP/1.1 200 OK
+Date: Fri, 15 Jun 2018 17:47:00 GMT
+Server: Apache/2.4.7 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Ubuntu&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Last-Modified: Fri, 15 Jun 2018 17:33:23 GMT
+ETag: &lt;span class=&quot;s2&quot;&gt;&quot;2cf6-56eb19cdebd1a&quot;&lt;/span&gt;
+Accept-Ranges: bytes
+Content-Length: 11510
+Vary: Accept-Encoding
+Content-Type: text/html&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;ansible-playbooks&quot;&gt;Ansible playbooks&lt;/h1&gt;
+&lt;p&gt;Running this every single time would be a hassle, wouldn’t it? Well, here’s where &lt;code class=&quot;highlighter-rouge&quot;&gt;playbooks&lt;/code&gt; kick in. They are a way to automate, in a &lt;code class=&quot;highlighter-rouge&quot;&gt;yaml&lt;/code&gt; file, all the &lt;code class=&quot;highlighter-rouge&quot;&gt;tasks&lt;/code&gt; you want to run on a vm. In this playbook, we’re going to install apache2 and start it, just like we did from the &lt;code class=&quot;highlighter-rouge&quot;&gt;cli&lt;/code&gt;.
+Let’s go to our test directory and start hacking!&lt;/p&gt;
+
+&lt;p&gt;We will name this playbook &lt;code class=&quot;highlighter-rouge&quot;&gt;example.yml&lt;/code&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~ » &lt;span class=&quot;nb&quot;&gt;mkdir test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$_&lt;/span&gt;
+~/test » vim example.yml&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We’ll start our &lt;code class=&quot;highlighter-rouge&quot;&gt;playbook&lt;/code&gt; with &lt;strong&gt;three dashes&lt;/strong&gt;. Followed by the &lt;code class=&quot;highlighter-rouge&quot;&gt;host&lt;/code&gt; where the playbook will run. Just like we did in the &lt;code class=&quot;highlighter-rouge&quot;&gt;cli&lt;/code&gt;, we will use the &lt;code class=&quot;highlighter-rouge&quot;&gt;become&lt;/code&gt; command to run as &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx_vm&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;become&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;True&lt;/span&gt;
+  &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now we will begin our &lt;code class=&quot;highlighter-rouge&quot;&gt;playbook&lt;/code&gt; with a &lt;code class=&quot;highlighter-rouge&quot;&gt;task&lt;/code&gt; command and then we will write the instructions to be executed.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;hosts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx_vm&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;become&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;True&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;run apt-get update&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;update_cache&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;yes&lt;/span&gt;
+
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;install apache2&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;apt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;apache2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;present&lt;/span&gt;
+
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;start apache2&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;apache2&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;started&lt;/span&gt;
+        &lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Finally, we will run our playbook with the &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible-playbook&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/test » ansible-playbook example.yml&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If everything went correct your playbook should run and the output should look something like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PLAY RECAP *************************************************************************************************************************************************************************************************
+nginx_vm                   : ok=4    changed=1    unreachable=0    failed=0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So we wrote our first playbook but let me be honest. This is just a glimpse of what &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; can do. This playbook is rather useless. Why? Well, we have hardcoded our &lt;code class=&quot;highlighter-rouge&quot;&gt;hosts&lt;/code&gt; so it will only run on our &lt;code class=&quot;highlighter-rouge&quot;&gt;vm&lt;/code&gt;. But don’t worry, stay tuned cause in the next post we’re going to run &lt;code class=&quot;highlighter-rouge&quot;&gt;Ansible&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;roles&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tags&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;:wq&lt;/p&gt;</content><author><name>chule</name><email>lcasarettom@gmail.com</email></author><summary type="html">Hi, in this post we’re going to talk about Ansible. So, what’s Ansible? Well, as the website says, Ansible is an IT orchestration engine that automates configuration management, application deployment and many other IT needs. What does this mean? This means that the days of logging via ssh into servers to install and configure them are gone! Through Ansible we will be able to install all of our apps, configure our files and do all sorts of tasks we can think of.</summary></entry></feed>

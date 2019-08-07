@@ -1,0 +1,629 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker: Port  Forwarding - chule.io</title>
+<meta name="description" content="Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intro to Docker post and Docker Part 2.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Docker: Port  Forwarding">
+<meta property="og:url" content="http://localhost:4000/Docker-port-forwarding/">
+
+
+  <meta property="og:description" content="Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intro to Docker post and Docker Part 2.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-03-18T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Docker-port-forwarding/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker: Port  Forwarding">
+    <meta itemprop="description" content="Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intro to Docker post and Docker Part 2.">
+    <meta itemprop="datePublished" content="March 18, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Docker: Port  Forwarding
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in today’s post we will continue where we left off with our <code class="highlighter-rouge">docker</code> series. If you haven’t read the previous posts, I recommend doing so. There’s the <a href="/intro-to-docker/">Intro to Docker</a> post and <a href="/Docker-working-with-containers/">Docker Part 2</a>.</p>
+
+<p>In part 3 we will talk about port-forwarding. We will create a basic webserver using the <code class="highlighter-rouge">Nginx</code> image.</p>
+
+<h1 id="pulling-the-nginx-image">Pulling the Nginx image</h1>
+
+<p>First, let’s create an <code class="highlighter-rouge">Nginx</code> directory where we are going to work and then pull the <code class="highlighter-rouge">Nginx</code> image from the <code class="highlighter-rouge">docker</code> hub.
+This may take some time depending on your connection, but it’s usually pretty fast.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~/docker [chuleh] » mkdir nginx
+~/docker [chuleh] » cd nginx
+docker/nginx [chuleh] » docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+f7e2b70d04ae: Pull complete
+08dd01e3f3ac: Pull complete
+d9ef3a1eb792: Pull complete
+Digest: sha256:98efe605f61725fd817ea69521b0eeb32bef007af0e3d0aeb6258c6e6fe7fc1a
+Status: Downloaded newer image for nginx:latest</code></pre></figure>
+
+<p>Your output should be similar to mine.</p>
+
+<h1 id="running-the-container">Running the container</h1>
+
+<p>Now it’s time to run the container. We’ve already covered how to do that, but in this case we’re going to add some extra flags. We’re going to use the <code class="highlighter-rouge">-p</code> flag to tell <code class="highlighter-rouge">docker</code> we want to map the <code class="highlighter-rouge">host port</code> to a <code class="highlighter-rouge">container port</code>. Remember this: <code class="highlighter-rouge">host</code> to the left, <code class="highlighter-rouge">container</code> to the right.
+In my case, I’m going to map port <code class="highlighter-rouge">8080</code> to port <code class="highlighter-rouge">80</code>.
+Type in the following command <code class="highlighter-rouge">docker run -p 8080:80 nginx</code></p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker run -p 8080:80 nginx</code></pre></figure>
+
+<p>The container should be running now. Now open another <code class="highlighter-rouge">terminal</code> or go to <code class="highlighter-rouge">localhost:8080</code> on your <code class="highlighter-rouge">browser</code>.
+I will open another tab on my terminal and <code class="highlighter-rouge">curl</code> the webserver.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~ » curl -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.15.9
+Date: Mon, 18 Mar 2019 15:00:22 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Tue, 26 Feb 2019 14:13:39 GMT
+Connection: keep-alive
+ETag: "5c754993-264"
+Accept-Ranges: bytes</code></pre></figure>
+
+<p>I got a <code class="highlighter-rouge">200</code>, which means that’s ok. The webserver is up. Now go back to your <code class="highlighter-rouge">docker</code> tab, you should see the hit on your log.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker run -p 8080:80 nginx
+172.17.0.1 - - [18/Mar/2019:15:00:22 +0000] "HEAD / HTTP/1.1" 200 0 "-" "curl/7.54.0" "-"</code></pre></figure>
+
+<p>Just to double check, I will run <code class="highlighter-rouge">docker container ls -a</code>. It will show the <code class="highlighter-rouge">container</code> that’s running.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~ » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+9bbbc3c3cbf1        nginx               "nginx -g 'daemon of…"   7 minutes ago       Up 7 minutes        0.0.0.0:8080-&gt;80/tcp   boring_shaw</code></pre></figure>
+
+<p>Now go back to the <code class="highlighter-rouge">Nginx</code> tab and hit <code class="highlighter-rouge">ctrl-c</code>. I will stop the container. Once again, let’s double check with <code class="highlighter-rouge">docker container ls -a</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~ » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                     PORTS               NAMES
+9bbbc3c3cbf1        nginx               "nginx -g 'daemon of…"   10 minutes ago      Exited (0) 5 seconds ago                       boring_shaw</code></pre></figure>
+
+<h1 id="running-the-container-detached">Running the container detached</h1>
+
+<p>Running the container detached is a good way to free up some space in your <code class="highlighter-rouge">terminal</code>. To do so, we will have to add another flag, in this case, the <code class="highlighter-rouge">-d</code> flag, which tells docker to run <code class="highlighter-rouge">detached</code>, meaning the container will run in the <code class="highlighter-rouge">background</code>.
+Type in <code class="highlighter-rouge">docker container run -p 8080:80 -d nginx</code>. It will print out the <code class="highlighter-rouge">container id</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker container run -p 8080:80 -d nginx
+5ae043c5d589e11a5e473e7a547128d964c7f01c9cc15bf9ca460481c8948c92</code></pre></figure>
+
+<p>Let’s check if it’s really running with a <code class="highlighter-rouge">curl</code> or by going with your <code class="highlighter-rouge">browser</code> to <code class="highlighter-rouge">localhost:8080</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » curl -I localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.15.9
+Date: Mon, 18 Mar 2019 15:19:27 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Tue, 26 Feb 2019 14:13:39 GMT
+Connection: keep-alive
+ETag: "5c754993-264"
+Accept-Ranges: bytes</code></pre></figure>
+
+<p>We can also check it by running <code class="highlighter-rouge">docker containerls -a</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS                  NAMES
+5ae043c5d589        nginx               "nginx -g 'daemon of…"   4 minutes ago       Up 4 minutes                0.0.0.0:8080-&gt;80/tcp   peaceful_jang
+9bbbc3c3cbf1        nginx               "nginx -g 'daemon of…"   24 minutes ago      Exited (0) 13 minutes ago                          boring_shaw</code></pre></figure>
+
+<p>Your output should be similar to this. I’ve got the <code class="highlighter-rouge">nginx</code> container from the previous example <code class="highlighter-rouge">exited</code> and the <code class="highlighter-rouge">container</code> from this example <code class="highlighter-rouge">running</code>.</p>
+
+<h1 id="attaching-to-the-container">Attaching to the container</h1>
+<p>What now? Well, we’ve got our <code class="highlighter-rouge">container</code> running, it’s time to attach to it and execute some commands.
+To attach to your container type <code class="highlighter-rouge">docker exec -i -t &lt;container id&gt; bash</code> and you should be inside your container.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker exec -i -t 5ae043c5d589 bash
+root@5ae043c5d589:/#</code></pre></figure>
+
+<p>Now we can run any commands inside our <code class="highlighter-rouge">container</code>. Be mindful that since the containers come with the bare minimum installed, some commands may not be available unless you install the software. Type <code class="highlighter-rouge">exit</code> or press <code class="highlighter-rouge">ctrl-d</code> to exit the container.
+Now type in <code class="highlighter-rouge">docker container ls -a</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS                  NAMES
+9145872cf703        nginx               "nginx -g 'daemon of…"   2 minutes ago       Up 2 minutes                0.0.0.0:8080-&gt;80/tcp   condescending_meninsky</code></pre></figure>
+
+<p>As you can see, we exited the <code class="highlighter-rouge">container</code> but it’s still running. Since we’re not going to use it anymore, let’s stop it with <code class="highlighter-rouge">docker container stop &lt;container id&gt;</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker container stop 9145872cf703
+9145872cf703</code></pre></figure>
+
+<p>And double check it’s stopped with <code class="highlighter-rouge">docker container ls -a</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nginx [chuleh] » docker container ls -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS               NAMES
+9145872cf703        nginx               "nginx -g 'daemon of…"   4 minutes ago       Exited (0) 4 seconds ago                        condescending_meninsky</code></pre></figure>
+
+<p>And that’s it for now. Stay tuned, in the next tutorial we will	 talk about <code class="highlighter-rouge">volumes</code> and <code class="highlighter-rouge">creating an image</code>.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-03-18T00:00:00-03:00">March 18, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker%3A+Port++Forwarding%20http%3A%2F%2Flocalhost%3A4000%2FDocker-port-forwarding%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FDocker-port-forwarding%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FDocker-port-forwarding%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/Docker-working-with-containers/" class="pagination--pager" title="Docker: Working With Containers
+">Previous</a>
+    
+    
+      <a href="/Docker-bind-mounts-and-volumes/" class="pagination--pager" title="Docker: Bind Mounts And Volumes
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-working-with-containers/" rel="permalink">Docker: Working With Containers
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

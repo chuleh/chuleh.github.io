@@ -1,0 +1,626 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker: What Is A Dockerfile - chule.io</title>
+<meta name="description" content="Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but when you’re going to use docker in production, you’ll most likely want to run your own images. Here’s when the Dockerfile comes into play.But before diving any further into Dockerfile, let’s do a little recap about what we’ve learned.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Docker: What Is A Dockerfile">
+<meta property="og:url" content="http://localhost:4000/Docker-what-is-a-Dockerfile/">
+
+
+  <meta property="og:description" content="Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but when you’re going to use docker in production, you’ll most likely want to run your own images. Here’s when the Dockerfile comes into play.But before diving any further into Dockerfile, let’s do a little recap about what we’ve learned.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-03-25T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Docker-what-is-a-Dockerfile/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker: What Is A Dockerfile">
+    <meta itemprop="description" content="Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but when you’re going to use docker in production, you’ll most likely want to run your own images. Here’s when the Dockerfile comes into play.But before diving any further into Dockerfile, let’s do a little recap about what we’ve learned.">
+    <meta itemprop="datePublished" content="March 25, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Docker: What Is A Dockerfile
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in today’s post we’re going to take a look at something completely new: <code class="highlighter-rouge">Dockerfile</code>. Until now we have been using community images that just worked, but when you’re going to use <code class="highlighter-rouge">docker</code> in production, you’ll most likely want to run your own images. Here’s when the <code class="highlighter-rouge">Dockerfile</code> comes into play.
+But before diving any further into <code class="highlighter-rouge">Dockerfile</code>, let’s do a little recap about what we’ve learned.</p>
+
+<h1 id="what-you-know-so-far">What you know so far</h1>
+<ul>
+  <li>By now you should know how to <a href="/Docker-working-with-containers/">start and stop containers</a></li>
+  <li>Know how to <a href="/Docker-working-with-containers/">get a shell in a container</a></li>
+  <li>Have a solid understanding of <a href="/Docker-port-forwarding/">port-forwarding and running containers detached</a></li>
+  <li>Get the difference between a <a href="/Docker-bind-mounts-and-volumes/">bind mount and a volume</a></li>
+</ul>
+
+<p>I <strong>can’t stress</strong> enough how important it is for you to have a solid understanding of the previous posts. Everything we’ve learned so far has been to create a solid foundation for what we’re going to learn today and the series of posts to come. That is <code class="highlighter-rouge">Dockerfile</code> and <code class="highlighter-rouge">docker-compose</code>.</p>
+
+<h1 id="dockerfile">Dockerfile</h1>
+<p>So what’s a <code class="highlighter-rouge">Dockerfile</code>? It’s basically a plain text file that holds a configuration telling our container how it should behave. Through our <code class="highlighter-rouge">CLI</code>, the <code class="highlighter-rouge">docker client</code> will connect with the <code class="highlighter-rouge">docker server</code>, the one that does all the heavy lifting for us. It will take the <code class="highlighter-rouge">Dockerfile</code>, go through all the lines of configuration written inside of it and in return will build us a usable image.</p>
+
+<p>Let’s take a look at the flow of a <code class="highlighter-rouge">Dockerfile</code>. First of all, notice how I always type <code class="highlighter-rouge">Dockerfile</code>, with a capital D. That’s how the file will be named, this is mandatory. You can change the name of it, but for now let’s stick to <code class="highlighter-rouge">Dockerfile</code>.</p>
+
+<p>The main line of a <code class="highlighter-rouge">Dockerfile</code> will always be <code class="highlighter-rouge">FROM</code>. This is mandatory by <code class="highlighter-rouge">docker</code>. This is where we will specify the <code class="highlighter-rouge">base image</code>.</p>
+
+<p>Then we will have other commands like <code class="highlighter-rouge">RUN</code>. This is where you will build up the image you’re creating. The syntax for a <code class="highlighter-rouge">RUN</code> instruction, is to type down the shell command.</p>
+
+<p>We also have <code class="highlighter-rouge">COPY</code>. As you may have guessed, this copies local files into the container.</p>
+
+<p><code class="highlighter-rouge">CMD</code> is to tell the image what command will run when it starts up. There can only be one <code class="highlighter-rouge">CMD</code> in a <code class="highlighter-rouge">Dockerfile</code>.</p>
+
+<p>There are several more commands inside a <code class="highlighter-rouge">Dockerfile</code>, but for now let’s just stick to these:</p>
+<ul>
+  <li>FROM</li>
+  <li>COPY</li>
+  <li>RUN</li>
+  <li>CMD</li>
+</ul>
+
+<h1 id="writing-your-first-dockerfile">Writing your first Dockerfile</h1>
+<p>We’re going to write a <code class="highlighter-rouge">Dockerfile</code> for <code class="highlighter-rouge">node.js</code> app that will count hits on our website. For this, we will need a <code class="highlighter-rouge">redis-server</code> and the <code class="highlighter-rouge">node.js</code> app itself.
+In this first lesson we will only cover the <code class="highlighter-rouge">Dockerfile</code> for the <code class="highlighter-rouge">redis-server</code>.</p>
+
+<p>As usual, I will work on my <code class="highlighter-rouge">docker</code> directory and create a new one called <code class="highlighter-rouge">visitor-counter</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">$ mkdir visitor-counter</code></pre></figure>
+
+<p>Inside we will create our <code class="highlighter-rouge">Dockerfile</code>. As I explained before, the first line will be <code class="highlighter-rouge">FROM</code>, specifying the base image we will use.
+In this case I won’t use <code class="highlighter-rouge">ubuntu</code> as it’s too heavy, we will use <code class="highlighter-rouge">alpine</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">FROM alpine</code></pre></figure>
+
+<p>Now it’s time to <code class="highlighter-rouge">RUN</code> the command to install <code class="highlighter-rouge">redis</code>. As you may have guessed, we will type in <code class="highlighter-rouge">RUN</code> and add a shell command from <code class="highlighter-rouge">alpine</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">RUN apk add --update redis</code></pre></figure>
+
+<p>Finally, we will type <code class="highlighter-rouge">CMD</code> instructing our <code class="highlighter-rouge">Dockerfile</code> to run the <code class="highlighter-rouge">redis-server</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">CMD ["redis-server"]</code></pre></figure>
+
+<p>Your file should look like this:</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">FROM alpine
+
+RUN apk add --update redis
+
+CMD ["redis-server"]</code></pre></figure>
+
+<h1 id="building-the-image">Building the image</h1>
+<p>So now we have our <code class="highlighter-rouge">Dockerfile</code> ready. It’s time to build it. For this we’re going to run a new command, <code class="highlighter-rouge">docker build</code>. I will also use the <code class="highlighter-rouge">-t</code> flag to <code class="highlighter-rouge">tag</code> the image with my <code class="highlighter-rouge">username/name-of-the-image</code>. And finally we type a <code class="highlighter-rouge">.</code>, a dot. Telling <code class="highlighter-rouge">docker</code> we’ll build in the current directory.</p>
+
+<p>A quick note, tagging the image is usually writen like this: <code class="highlighter-rouge">username/name-of-the-image:version</code>. This is useful for when you have several images of the same service, but in my case I will just have one <code class="highlighter-rouge">redis-server</code>.
+If you don’t specify the version, it will default to <code class="highlighter-rouge">latest</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/visitor-counter [chuleh●] » docker build -t chuleh/redis-server .
+Sending build context to Docker daemon  3.072kB
+Step 1/3 : FROM alpine
+ ---&gt; 5cb3aa00f899
+Step 2/3 : RUN apk add --update redis
+ ---&gt; Running in 1f1ce6c253e7
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.9/community/x86_64/APKINDEX.tar.gz
+(1/1) Installing redis (4.0.12-r0)
+Executing redis-4.0.12-r0.pre-install
+Executing redis-4.0.12-r0.post-install
+Executing busybox-1.29.3-r10.trigger
+OK: 7 MiB in 15 packages
+Removing intermediate container 1f1ce6c253e7
+ ---&gt; 5dcdaa0db544
+Step 3/3 : CMD ["redis-server"]
+ ---&gt; Running in 94611db3a24d
+Removing intermediate container 94611db3a24d
+ ---&gt; e9a44d9ad7e6
+Successfully built e9a44d9ad7e6
+Successfully tagged chuleh/redis-server:latest</code></pre></figure>
+
+<p>If everything went correct, your output should be similar to mine. We can double check if the image has been built by typing <code class="highlighter-rouge">docker image ls</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/visitor-counter [chuleh●] » docker image ls
+REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+chuleh/redis-server   latest              e9a44d9ad7e6        2 minutes ago       8.06MB</code></pre></figure>
+
+<h1 id="running-the-container">Running the container</h1>
+<p>Now, all that’s left is to run the container. We already know how to do that, <code class="highlighter-rouge">docker container run</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">docker/visitor-counter <span class="o">[</span>chuleh●] » docker container run chuleh/redis-server
+1:C 23 Mar 09:16:04.866 <span class="c"># oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span>
+1:C 23 Mar 09:16:04.866 <span class="c"># Redis version=4.0.12, bits=64, commit=1be97168, modified=0, pid=1, just started</span>
+1:C 23 Mar 09:16:04.866 <span class="c"># Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf</span>
+1:M 23 Mar 09:16:04.868 <span class="k">*</span> Running <span class="nv">mode</span><span class="o">=</span>standalone, <span class="nv">port</span><span class="o">=</span>6379.
+1:M 23 Mar 09:16:04.868 <span class="c"># WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span>
+1:M 23 Mar 09:16:04.868 <span class="c"># Server initialized</span>
+1:M 23 Mar 09:16:04.868 <span class="c"># WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.</span>
+1:M 23 Mar 09:16:04.868 <span class="k">*</span> Ready to accept connections</code></pre></figure>
+
+<p>Again, your output should be similar to mine. Pay attention to the last line, it says <code class="highlighter-rouge">Ready to accept connections</code>. Meaning our container ran successfully.</p>
+
+<p>That’ll be all for today’s lesson. Stay tuned cause in the next lecture we’re going to create a <code class="highlighter-rouge">node.js</code> app that will be the foundation for our next projects.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-03-25T00:00:00-03:00">March 25, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker%3A+What+Is+A+Dockerfile%20http%3A%2F%2Flocalhost%3A4000%2FDocker-what-is-a-Dockerfile%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FDocker-what-is-a-Dockerfile%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FDocker-what-is-a-Dockerfile%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/Docker-bind-mounts-and-volumes/" class="pagination--pager" title="Docker: Bind Mounts And Volumes
+">Previous</a>
+    
+    
+      <a href="/Docker-diving-deeper-into-Dockerfile/" class="pagination--pager" title="Docker: Diving Deeper Into Dockerfile
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-working-with-containers/" rel="permalink">Docker: Working With Containers
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

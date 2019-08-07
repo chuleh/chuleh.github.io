@@ -1,0 +1,675 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ansible Playbooks - chule.io</title>
+<meta name="description" content="Hi, in this post we will take a more in-depth look at Ansible playbooks. We’re going to continue from from where we left off in our intro to ansible. If you haven’t checked that post yet, I suggest you go and read it before moving any further with this one.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Ansible Playbooks">
+<meta property="og:url" content="http://localhost:4000/ansible-playbooks/">
+
+
+  <meta property="og:description" content="Hi, in this post we will take a more in-depth look at Ansible playbooks. We’re going to continue from from where we left off in our intro to ansible. If you haven’t checked that post yet, I suggest you go and read it before moving any further with this one.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-06-18T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/ansible-playbooks/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ansible Playbooks">
+    <meta itemprop="description" content="Hi, in this post we will take a more in-depth look at Ansible playbooks. We’re going to continue from from where we left off in our intro to ansible. If you haven’t checked that post yet, I suggest you go and read it before moving any further with this one.">
+    <meta itemprop="datePublished" content="June 18, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Ansible Playbooks
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in this post we will take a more in-depth look at <code class="highlighter-rouge">Ansible playbooks</code>. We’re going to continue from from where we left off in our <a href="/intro-to-ansible/">intro to ansible</a>. If you haven’t checked that post yet, I suggest you go and read it before moving any further with this one.</p>
+
+<p>In today’s post we’re going to write a <code class="highlighter-rouge">playbook</code> as in the previous session, but we will enhance it. Rather than running it as a single playbook, we’re going to create a <code class="highlighter-rouge">yml</code> file with all our hosts and run the <code class="highlighter-rouge">playbook</code> as a <code class="highlighter-rouge">role</code>.
+<!--more--></p>
+
+<p>For today’s lesson, I will be running 3 <code class="highlighter-rouge">vms</code> with <code class="highlighter-rouge">ubuntu</code>. The same ones from our <a href="/intro-to-vagrant/">vagrant</a> post.
+They’re already set up with my user and password, and I’m already included in the <code class="highlighter-rouge">sudoers</code> file.</p>
+
+<p>Let’s get our hands dirty. We’re going to learn to:</p>
+<ul>
+  <li>Edit our inventory</li>
+  <li>Create a role</li>
+  <li>Create a main includer for our hosts file</li>
+  <li>Running our playbook</li>
+</ul>
+
+<h1 id="editing-the-inventory">Editing the inventory</h1>
+<p>Open up your terminal and edit your <code class="highlighter-rouge">/etc/ansible/hosts</code> file. You should already have this file if you followed my previous <a href="/intro-to-ansible/">ansible</a> post.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~ » <span class="nb">sudo </span>vim /etc/ansible/hosts</code></pre></figure>
+
+<p>Next, I’m going to create a <code class="highlighter-rouge">group</code> inside our inventory. I will name it <code class="highlighter-rouge">[home]</code> and add my <code class="highlighter-rouge">webservers</code> and <code class="highlighter-rouge">database</code> to it. I will use the <code class="highlighter-rouge">ansible_host</code> next to each of them, to specify the <code class="highlighter-rouge">ip address</code>. Your file should look something like this:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[home]
+webserver1  ansible_host=192.168.0.20
+webserver2  ansible_host=192.168.0.30
+dbserver  ansible_host=192.168.0.40
+</code></pre></div></div>
+<p>Of course, change the <code class="highlighter-rouge">ip</code> address to match the ones you’re using</p>
+
+<p>To check that all the <code class="highlighter-rouge">vms</code> are responding, I’ll just ping the <code class="highlighter-rouge">group</code> now, instead of each of the <code class="highlighter-rouge">vms</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~ » ansible home <span class="nt">-m</span> ping
+webserver1 | SUCCESS <span class="o">=&gt;</span> <span class="o">{</span>
+    <span class="s2">"changed"</span>: <span class="nb">false</span>,
+    <span class="s2">"ping"</span>: <span class="s2">"pong"</span>
+<span class="o">}</span>
+webserver2 | SUCCESS <span class="o">=&gt;</span> <span class="o">{</span>
+    <span class="s2">"changed"</span>: <span class="nb">false</span>,
+    <span class="s2">"ping"</span>: <span class="s2">"pong"</span>
+<span class="o">}</span>
+dbserver | SUCCESS <span class="o">=&gt;</span> <span class="o">{</span>
+    <span class="s2">"changed"</span>: <span class="nb">false</span>,
+    <span class="s2">"ping"</span>: <span class="s2">"pong"</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>Cool, right? Now we can run <code class="highlighter-rouge">ad-hoc</code> commands to the group and <code class="highlighter-rouge">ansible</code> will know what we’re talking about.</p>
+
+<h1 id="creating-a-role">Creating a role</h1>
+<p>What is a <code class="highlighter-rouge">role</code>? Let’s see what <code class="highlighter-rouge">ansible</code> says: Roles are ways of automatically loading certain vars_files, tasks, and handlers based on a known file structure. Ok, what does this mean? First it means that roles need a known <strong>file structure</strong>. That would be, of course, the <code class="highlighter-rouge">roles</code> directory, which is our today’s topic.
+So, as usual, let’s create a <code class="highlighter-rouge">test</code> directory and inside we will create a <code class="highlighter-rouge">roles</code> directory. Finally, we will <code class="highlighter-rouge">cd</code> into it.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~ » <span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nb">test</span>/roles
+~ » <span class="nb">cd test</span>/roles
+<span class="nb">test</span>/roles »</code></pre></figure>
+
+<p>Now, we will create our new role. Let’s try something different, let’s create a role that will install the apps that don’t come by default in <code class="highlighter-rouge">ubuntu</code>. I will call this role <code class="highlighter-rouge">apps</code>, so I will create the <code class="highlighter-rouge">apps</code> directory. Remember the definition said it needed a <code class="highlighter-rouge">tasks</code> in their file structure? Well, we’ll also create a <code class="highlighter-rouge">tasks</code> directory, and inside of it we will create our playbook, which has to be named <code class="highlighter-rouge">main.yml</code>. Let’s do it.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">test</span>/roles » <span class="nb">mkdir</span> <span class="nt">-p</span> apps/tasks <span class="o">&amp;&amp;</span> <span class="nb">cd</span> <span class="nv">$_</span>
+apps/tasks » vim main.yml</code></pre></figure>
+
+<p>Now it’s time to start hacking, inside the <code class="highlighter-rouge">main.yml</code> we will write our playbook. As with every <code class="highlighter-rouge">yaml</code> file, it will start with <strong>three dashes</strong>. Then we will give our task a <code class="highlighter-rouge">name</code>, in my case I want to run <code class="highlighter-rouge">apt-get update</code> if it’s been more than an hour. It should look something like this:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">run apt-get update</span>
+  <span class="na">apt</span><span class="pi">:</span> <span class="s">update_cache=yes cache_valid_time=3600</span>
+  </code></pre></figure>
+
+<p>See that we haven’ defined <code class="highlighter-rouge">hosts</code> or <code class="highlighter-rouge">become</code> in our <code class="highlighter-rouge">role</code> like we did with our <code class="highlighter-rouge">apache2</code> playbook. That’s because we’re going to do it in our next step, when we create our main includer.</p>
+
+<p>Now it’s time to install the apps, for this we will use the <code class="highlighter-rouge">apt</code> module and call the <code class="highlighter-rouge">item</code> variable. Next, we will define <code class="highlighter-rouge">with_items</code> that are going to be the <code class="highlighter-rouge">apps</code> that will fill our <code class="highlighter-rouge">item</code> variable. The playbook, should look something like this:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">install apps</span>
+  <span class="na">apt</span><span class="pi">:</span> <span class="s">name={{ item }} state=present</span>
+  <span class="na">with_items</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">screen</span>
+    <span class="pi">-</span> <span class="s">rsync</span>
+    <span class="pi">-</span> <span class="s">htop</span>
+    <span class="pi">-</span> <span class="s">iotop</span></code></pre></figure>
+
+<p>Mind the <code class="highlighter-rouge">curly braces</code> when you type it, otherwise it will fail. Our complete playbook should look like this:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">run apt-get update</span>
+  <span class="na">apt</span><span class="pi">:</span> <span class="s">update_cache=yes cache_valid_time=3600</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">install apps</span>
+  <span class="na">apt</span><span class="pi">:</span> <span class="s">name={{ item }} state=present</span>
+  <span class="na">with_items</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">screen</span>
+    <span class="pi">-</span> <span class="s">rsync</span>
+    <span class="pi">-</span> <span class="s">htop</span>
+    <span class="pi">-</span> <span class="s">iotop</span>
+ </code></pre></figure>
+
+<p>We have successfully created our first role! Now it’s time to run it.</p>
+
+<h1 id="creating-the-main-includer-file">Creating the main includer file</h1>
+<p>Why haven’t we included the <code class="highlighter-rouge">hosts</code> directive or the <code class="highlighter-rouge">become</code> in our playbook? That’s because we’re not hardcoding anything into it. This means that we can use the same role in other hosts we might have in our inventory and it will just work! This is known as <code class="highlighter-rouge">reusable</code> code.</p>
+
+<p>Now it’s time to run our <code class="highlighter-rouge">playbook</code> with the <code class="highlighter-rouge">role</code> we specified. For this, we’re going to create a file where we will specify the <code class="highlighter-rouge">hosts</code> and the
+<code class="highlighter-rouge">tags</code>. <code class="highlighter-rouge">cd</code> back to the test directory and create a new <code class="highlighter-rouge">yml</code> file. I will call it <code class="highlighter-rouge">test.yml</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apps/tasks » <span class="nb">cd</span> ../../..
+~/test » vim test.yml</code></pre></figure>
+
+<p>We’ll start with our <strong>three dashes</strong> and start typing our <code class="highlighter-rouge">hosts</code>, this has to be the same name you defined in your inventory. And we will tell ansible we want to become <code class="highlighter-rouge">root</code> with the <code class="highlighter-rouge">become</code> directive:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">home</span>
+  <span class="na">become</span><span class="pi">:</span> <span class="s">True</span>
+  </code></pre></figure>
+
+<p>Now here is where the magic happens, let’s define our <code class="highlighter-rouge">role</code> and <code class="highlighter-rouge">tag</code>. We will type <code class="highlighter-rouge">roles:</code>, press <code class="highlighter-rouge">enter</code> and define our role. This is a list, so <strong>be careful</strong> with the indentation:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml">  <span class="na">roles</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">role</span><span class="pi">:</span> <span class="nv">apps</span><span class="pi">,</span> <span class="nv">tags</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">apps'</span><span class="pi">]</span> <span class="pi">}</span>
+    </code></pre></figure>
+
+<p>See how I defined our role <code class="highlighter-rouge">apps</code>? That’s the role we just created. The <code class="highlighter-rouge">tag</code> I used was the same as the <code class="highlighter-rouge">role</code> name, but it could’ve been anything you wanted. Let me show you, I will add another <code class="highlighter-rouge">tag</code> and call it <code class="highlighter-rouge">watermelon</code>.
+So this is is what my includer file looks like:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">home</span>
+  <span class="na">become</span><span class="pi">:</span> <span class="s">True</span>
+  <span class="na">roles</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="pi">{</span> <span class="nv">role</span><span class="pi">:</span> <span class="nv">apps</span><span class="pi">,</span> <span class="nv">tags</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">apps'</span><span class="pi">,</span><span class="s1">'</span><span class="s">watermelon'</span><span class="pi">]</span> <span class="pi">}</span>
+    </code></pre></figure>
+
+<h1 id="running-our-playbook">Running our playbook</h1>
+<p>Now it’s time to run our playbook. We will use <code class="highlighter-rouge">ansible-playbook</code> command followed by <code class="highlighter-rouge">test.yml</code> which is our main includer file with all the hosts. Then we will use the <code class="highlighter-rouge">-l</code> flag which means <code class="highlighter-rouge">limit</code>, saying that we want to specify the <code class="highlighter-rouge">hosts</code> that will be affected by our playbook and the <code class="highlighter-rouge">-t</code> flag, which stands for <code class="highlighter-rouge">tag</code>. Remember I tagged it as <code class="highlighter-rouge">watermelon</code>? I’m going to run it like that.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/test » ansible-playbook test.yml <span class="nt">-l</span> home <span class="nt">-t</span> watermelon
+
+PLAY <span class="o">[</span>home] <span class="k">************************************************************************************************************************************************************************************************</span>
+
+TASK <span class="o">[</span>Gathering Facts] <span class="k">*************************************************************************************************************************************************************************************</span>
+ok: <span class="o">[</span>webserver1]
+ok: <span class="o">[</span>webserver2]
+ok: <span class="o">[</span>dbserver]
+
+TASK <span class="o">[</span>apps : run apt-get update] <span class="k">***************************************************************************************************************************************************************************</span>
+changed: <span class="o">[</span>webserver2]
+changed: <span class="o">[</span>dbserver]
+changed: <span class="o">[</span>webserver1]
+
+TASK <span class="o">[</span>apps : <span class="nb">install </span>apps] <span class="k">*********************************************************************************************************************************************************************************</span>
+ok: <span class="o">[</span>webserver1] <span class="o">=&gt;</span> <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">'screen'</span>, u<span class="s1">'rsync'</span>, u<span class="s1">'htop'</span>, u<span class="s1">'iotop'</span><span class="o">])</span>
+ok: <span class="o">[</span>webserver2] <span class="o">=&gt;</span> <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">'screen'</span>, u<span class="s1">'rsync'</span>, u<span class="s1">'htop'</span>, u<span class="s1">'iotop'</span><span class="o">])</span>
+ok: <span class="o">[</span>dbserver] <span class="o">=&gt;</span> <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">'screen'</span>, u<span class="s1">'rsync'</span>, u<span class="s1">'htop'</span>, u<span class="s1">'iotop'</span><span class="o">])</span>
+
+PLAY RECAP <span class="k">*************************************************************************************************************************************************************************************************</span>
+dbserver                   : <span class="nv">ok</span><span class="o">=</span>3    <span class="nv">changed</span><span class="o">=</span>1    <span class="nv">unreachable</span><span class="o">=</span>0    <span class="nv">failed</span><span class="o">=</span>0
+webserver1                 : <span class="nv">ok</span><span class="o">=</span>3    <span class="nv">changed</span><span class="o">=</span>1    <span class="nv">unreachable</span><span class="o">=</span>0    <span class="nv">failed</span><span class="o">=</span>0
+webserver2                 : <span class="nv">ok</span><span class="o">=</span>3    <span class="nv">changed</span><span class="o">=</span>1    <span class="nv">unreachable</span><span class="o">=</span>0    <span class="nv">failed</span><span class="o">=</span>0ç</code></pre></figure>
+
+<p>Perfect! <code class="highlighter-rouge">Ansible</code> ran without flaws. In my case the apps were already installed, so nothing’s changed.</p>
+
+<p>Now in this way we can specify the <code class="highlighter-rouge">-l</code> flag and affect only the resource we want. Go ahead and give it a shot, try running <code class="highlighter-rouge">ansible-playbook test.yml -l webserver1 -t apps</code> and see what happens. I will only affect <code class="highlighter-rouge">webserver1</code> leaving <code class="highlighter-rouge">webserver2</code> and <code class="highlighter-rouge">dbserver</code> untouched.</p>
+
+<p>This has been a long post and we’ve gone through a lot of new stuff, so make sure to understand everything we wrote. Create new <code class="highlighter-rouge">roles</code>, add new <code class="highlighter-rouge">hosts</code> to your <code class="highlighter-rouge">inventory</code>, play with <code class="highlighter-rouge">ansible</code>, that’s the best way to learn.</p>
+
+<p>Hope you enjoyed it, stay tuned cause in the next session we will learn about <code class="highlighter-rouge">templates</code> and <code class="highlighter-rouge">handlers</code>.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-06-18T00:00:00-03:00">June 18, 2018</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Ansible+Playbooks%20http%3A%2F%2Flocalhost%3A4000%2Fansible-playbooks%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fansible-playbooks%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fansible-playbooks%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/intro-to-ansible/" class="pagination--pager" title="Intro To Ansible
+">Previous</a>
+    
+    
+      <a href="/ansible-playbooks-templates-and-variables/" class="pagination--pager" title="Ansible Playbooks Templates And Variables
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

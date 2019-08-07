@@ -1,0 +1,695 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Intro To Docker - chule.io</title>
+<meta name="description" content="Hi, in this post we’re going to learn about Docker and containers.We’re going to install docker and work with the hello world example and learn some basic commands and terminology.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Intro To Docker">
+<meta property="og:url" content="http://localhost:4000/intro-to-docker/">
+
+
+  <meta property="og:description" content="Hi, in this post we’re going to learn about Docker and containers.We’re going to install docker and work with the hello world example and learn some basic commands and terminology.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-02-20T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/intro-to-docker/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Intro To Docker">
+    <meta itemprop="description" content="Hi, in this post we’re going to learn about Docker and containers.We’re going to install docker and work with the hello world example and learn some basic commands and terminology.">
+    <meta itemprop="datePublished" content="February 20, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Intro To Docker
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in this post we’re going to learn about <a href="https://www.docker.com/" target="_blank">Docker</a> and containers.
+We’re going to install docker and work with the <code class="highlighter-rouge">hello world</code> example and learn some basic commands and terminology.</p>
+
+<h1 id="installing-docker">Installing Docker</h1>
+<p>Installing <code class="highlighter-rouge">docker</code> is pretty straight-forward, although it may vary depending on which OS you’re on. I suggest going <a href="https://docs.docker.com/install/" target="_blank">here</a> and following the guide.</p>
+
+<h1 id="hello-world">Hello World</h1>
+<p>Let’s check that we have <code class="highlighter-rouge">docker</code> running by checking the version:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~ » docker <span class="nt">--version</span>
+Docker version 18.09.1, build 4c52b90</code></pre></figure>
+
+<p>Of course, the version might change, but you should get some output.
+Before going any further, let’s check two basic concepts:</p>
+
+<ul>
+  <li>Images</li>
+</ul>
+
+<p>What’s an image? An image is the file system and configuration for our app, which is used to create containers.</p>
+
+<ul>
+  <li>Containers</li>
+</ul>
+
+<p>What’s a container? A container is a running instance of a <code class="highlighter-rouge">docker</code> image. They actually run the app. It contains an app and all of its dependencies.</p>
+
+<p>Remember these two concepts, they are key to understanding images and containers.
+Now let’s get back on our terminal and run the <code class="highlighter-rouge">hello-world</code> example with <code class="highlighter-rouge">docker run hello-world</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~ » docker run hello-world
+Unable to find image <span class="s1">'hello-world:latest'</span> locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull <span class="nb">complete
+</span>Digest: sha256:2557e3c07ed1e38f26e389462d03ed943586f744621577a99efb77324b0fe535
+Status: Downloaded newer image <span class="k">for </span>hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the <span class="s2">"hello-world"</span> image from the Docker Hub.
+    <span class="o">(</span>amd64<span class="o">)</span>
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ <span class="nv">$ </span>docker run <span class="nt">-it</span> ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/</code></pre></figure>
+
+<p>Your output should be similar to the one above, if that’s so, it means your docker installation is working properly.
+Read the output, it’s actually very helpful, it lets you know what happened behind the scenes. <code class="highlighter-rouge">Docker daemon</code> actually did a <code class="highlighter-rouge">docker image pull</code> to download the image and then it did a <code class="highlighter-rouge">docker container run</code> to show you the <code class="highlighter-rouge">hello-world</code> output.</p>
+
+<p>Try running <code class="highlighter-rouge">docker run hello-world</code> again. It should be faster since the <code class="highlighter-rouge">image</code> has already been pulled.</p>
+
+<h1 id="pulling-your-first-image">Pulling your first image</h1>
+<p>Now that everything’s setup, it’s time to start hacking. Let’s pull an <code class="highlighter-rouge">Ubuntu</code> image from the repos.</p>
+
+<p>Run the following commmand <code class="highlighter-rouge">docker pull ubuntu</code>.
+This will download the latest <code class="highlighter-rouge">image</code> from the repos.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker pull ubuntu
+Using default tag: latest
+latest: Pulling from library/ubuntu
+Digest: sha256:7a47ccc3bbe8a451b500d2b53104868b46d60ee8f5b35a24b41a86077c650210
+Status: Downloaded newer image <span class="k">for </span>ubuntu:latest</code></pre></figure>
+
+<p>Now type <code class="highlighter-rouge">docker image ls</code>, you should see the <code class="highlighter-rouge">hello-world</code> and the <code class="highlighter-rouge">Ubuntu</code> image.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker image <span class="nb">ls
+</span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              47b19964fb50        2 weeks ago         88.1MB
+hello-world         latest              fce289e99eb9        7 weeks ago         1.84kB</code></pre></figure>
+
+<h1 id="creating-your-first-container">Creating your first container</h1>
+<p>Now we’re going to run a container based on this image.
+To do so, we’ll use the command <code class="highlighter-rouge">docker container run &lt;container&gt; &lt;command&gt;</code>. Let’s list the contents of our container with <code class="highlighter-rouge">docker container run ubuntu ls -l</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container run ubuntu <span class="nb">ls</span> <span class="nt">-l</span>
+total 64
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  340 Feb 20 22:35 dev
+drwxr-xr-x   1 root root 4096 Feb 20 22:35 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 184 root root    0 Feb 20 22:35 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 20 22:35 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var</code></pre></figure>
+
+<p>So when you ran the <code class="highlighter-rouge">run</code> command, believe it or not, a <code class="highlighter-rouge">container</code> was created. The <code class="highlighter-rouge">docker daemon</code> created the container and then ran the command inside of it, finally, the output is streamed through the <code class="highlighter-rouge">docker client</code>.</p>
+
+<p>Let’s try something, run the following command <code class="highlighter-rouge">docker container ls</code>. This will list all your active containers:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls
+</span>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES</code></pre></figure>
+
+<p>Ok, so what happened here? We created a container and listed the contents of it, however when we list the <code class="highlighter-rouge">containers</code> the output shows none.
+This is not a bug, this is correct, the container ran with the command we gave it and then the process stopped.</p>
+
+<p>Now let’s try <code class="highlighter-rouge">docker container ls -a</code>.
+This will show all of the containers we ran so far.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls</span> <span class="nt">-a</span>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
+f69327766694        ubuntu              <span class="s2">"ls -l"</span>             4 minutes ago       Exited <span class="o">(</span>0<span class="o">)</span> 4 minutes ago                       elegant_bohr</code></pre></figure>
+
+<p>Notice the <code class="highlighter-rouge">STATUS</code> column, it shows the containers just exited minutes ago.</p>
+
+<h1 id="run-containers-interactively">Run containers interactively</h1>
+<p>We can also run commands inside our container from the container’s <code class="highlighter-rouge">CLI</code>.
+Try running <code class="highlighter-rouge">docker run -i -t ubuntu bash</code>, this will open an interactive shell session within our container.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker run <span class="nt">-i</span> <span class="nt">-t</span> ubuntu bash
+root@d3cdbc126cd4:/#</code></pre></figure>
+
+<p>Cool, now we can do lots of stuff inside our containers.
+Let’s create a <code class="highlighter-rouge">hello-world</code> file and exit.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">root@d3cdbc126cd4:/# <span class="nb">echo</span> <span class="s2">"hello world"</span> <span class="o">&gt;</span> hello-world
+root@d3cdbc126cd4:/# <span class="nb">exit
+exit</span></code></pre></figure>
+
+<h1 id="name-your-container">Name your container</h1>
+<p>As you may have noticed when running <code class="highlighter-rouge">docker container ls</code>, all containers have some funny name. This name is generated randomly by <code class="highlighter-rouge">docker</code>.
+We can name our container with the <code class="highlighter-rouge">--name</code> flag. I will name mine <code class="highlighter-rouge">ubuntu-test</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container run <span class="nt">--name</span> ubuntu-test ubuntu <span class="nb">ls</span> <span class="nt">-l</span>
+total 64
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  340 Feb 20 23:09 dev
+drwxr-xr-x   1 root root 4096 Feb 20 23:09 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 183 root root    0 Feb 20 23:09 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 20 22:35 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var</code></pre></figure>
+
+<p>And now let’s check it with <code class="highlighter-rouge">docker container ls -a</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls</span> <span class="nt">-a</span>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                          PORTS               NAMES
+987ddbb75b46        ubuntu              <span class="s2">"ls -l"</span>             50 seconds ago      Exited <span class="o">(</span>0<span class="o">)</span> 49 seconds ago                           ubuntu-test
+7dcca0aee2d3        ubuntu              <span class="s2">"bash"</span>              11 minutes ago      Exited <span class="o">(</span>0<span class="o">)</span> About a minute ago                       pensive_khorana
+d3cdbc126cd4        ubuntu              <span class="s2">"bash"</span>              16 minutes ago      Exited <span class="o">(</span>0<span class="o">)</span> 13 minutes ago                           festive_robinson
+f69327766694        ubuntu              <span class="s2">"ls -l"</span>             35 minutes ago      Exited <span class="o">(</span>0<span class="o">)</span> 35 minutes ago                           elegant_bohr
+43fa84ae8b90        ubuntu              <span class="s2">"/bin/bash"</span>         36 minutes ago      Exited <span class="o">(</span>0<span class="o">)</span> 36 minutes ago                           modest_burnell</code></pre></figure>
+
+<p>As you can see in the <code class="highlighter-rouge">NAMES</code> column, the name of the container has been changed.</p>
+
+<p>That’s it for today. Play around with <code class="highlighter-rouge">docker image</code> and <code class="highlighter-rouge">docker container</code>, they’re your bread and butter and most likely the commands you will be using the most.</p>
+
+<p>Stay tuned for in the next lesson we’ll be covering <code class="highlighter-rouge">deletion</code> of images and containers.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-02-20T00:00:00-03:00">February 20, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Intro+To+Docker%20http%3A%2F%2Flocalhost%3A4000%2Fintro-to-docker%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fintro-to-docker%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fintro-to-docker%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/ansible-playbooks-decisions/" class="pagination--pager" title="Ansible Playbooks Decisions
+">Previous</a>
+    
+    
+      <a href="/Docker-working-with-containers/" class="pagination--pager" title="Docker: Working With Containers
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

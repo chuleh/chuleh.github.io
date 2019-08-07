@@ -1,0 +1,665 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker: Working With Containers - chule.io</title>
+<meta name="description" content="Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the very basics of Docker.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Docker: Working With Containers">
+<meta property="og:url" content="http://localhost:4000/Docker-working-with-containers/">
+
+
+  <meta property="og:description" content="Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the very basics of Docker.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-02-21T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Docker-working-with-containers/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker: Working With Containers">
+    <meta itemprop="description" content="Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the very basics of Docker.">
+    <meta itemprop="datePublished" content="February 21, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Docker: Working With Containers
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in this post we’re continuing our series about <code class="highlighter-rouge">Docker</code>, if you’re completely new to <code class="highlighter-rouge">Docker</code>, I suggest reading my <a href="/intro-to-docker/">Intro to Docker</a> where you will learn the very basics of <code class="highlighter-rouge">Docker</code>.</p>
+
+<p>Today we will learn about deletion of images, we will create a new container, mess it up and spin a new one in a matter of seconds.</p>
+
+<h1 id="starting-a-new-container">Starting a new container</h1>
+<p>If you followed my first lesson, you should already have the <code class="highlighter-rouge">Ubuntu</code> image we pulled from the <code class="highlighter-rouge">Docker hub</code>. Keep it, cause we’re going to use it now to create a new container.
+We’re going to run the new container interactively, we’re going to <code class="highlighter-rouge">rm -rf /</code> it and then we’ll start a new container.
+Type <code class="highlighter-rouge">docker container run -i -t ubuntu bash</code></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container run <span class="nt">-i</span> <span class="nt">-t</span> ubuntu bash
+root@a058c5234e4b:/#</code></pre></figure>
+
+<p>Now it’s time to mess up the container. We’re going to <code class="highlighter-rouge">rm -rf /</code> and delete all of its contents. <em>MAKE SURE YOU’RE IN THE CONTAINER</em> when typing this.
+Type <code class="highlighter-rouge">rm -rf / --no-preserve-root</code> and you’ll mess up your container. You’ll see a lot of output while everything is being deleted.
+Just to make sure, try typing a few commands, you’ll see that they’re not found.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">root@a058c5234e4b:/# ls
+bash: /bin/ls: No such file or directory</code></pre></figure>
+
+<p>Good, now just exit the container with either <code class="highlighter-rouge">ctrl-d</code> or by typing <code class="highlighter-rouge">exit</code>.
+Let’s check our container exited with <code class="highlighter-rouge">docker container ls -a</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls</span> <span class="nt">-a</span>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                       PORTS               NAMES
+a058c5234e4b        ubuntu              <span class="s2">"bash"</span>              7 minutes ago       Exited <span class="o">(</span>127<span class="o">)</span> 7 seconds ago                       silly_lumiere
+ad6759ec86c7        ubuntu              <span class="s2">"/bin/bash"</span>         9 minutes ago       Exited <span class="o">(</span>0<span class="o">)</span> 9 minutes ago                         musing_swanson</code></pre></figure>
+
+<p>So far so good. Now let’s run another container based on the same image.
+Type <code class="highlighter-rouge">docker run container -i -t ubuntu bash</code>.  You should have a fresh new container working.
+Type in <code class="highlighter-rouge">ls -la</code> and you should see everything ready to work again on your container.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container run <span class="nt">-i</span> <span class="nt">-t</span> ubuntu bash
+root@8a6fe93f040b:/# <span class="nb">ls</span> <span class="nt">-la</span>
+total 72
+drwxr-xr-x   1 root root 4096 Feb 21 15:32 <span class="nb">.</span>
+drwxr-xr-x   1 root root 4096 Feb 21 15:32 ..
+<span class="nt">-rwxr-xr-x</span>   1 root root    0 Feb 21 15:32 .dockerenv
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  360 Feb 21 15:32 dev
+drwxr-xr-x   1 root root 4096 Feb 21 15:32 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 183 root root    0 Feb 21 15:32 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 21 15:24 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var</code></pre></figure>
+
+<h1 id="deleting-containers">Deleting containers</h1>
+<p>Our containers take up some space, it’s usually minimal, though. But they still do take some space so now it’s time to delete them.
+First let’s check the space they’re consuming with <code class="highlighter-rouge">docker container ls -a -s</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls</span> <span class="nt">-a</span> <span class="nt">-s</span>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                        PORTS               NAMES               SIZE
+8a6fe93f040b        ubuntu              <span class="s2">"bash"</span>              8 minutes ago       Exited <span class="o">(</span>0<span class="o">)</span> 4 minutes ago                          amazing_pare        7B <span class="o">(</span>virtual 88.1MB<span class="o">)</span>
+a058c5234e4b        ubuntu              <span class="s2">"bash"</span>              18 minutes ago      Exited <span class="o">(</span>127<span class="o">)</span> 10 minutes ago                       silly_lumiere       0B <span class="o">(</span>virtual 88.1MB<span class="o">)</span>
+ad6759ec86c7        ubuntu              <span class="s2">"/bin/bash"</span>         20 minutes ago      Exited <span class="o">(</span>0<span class="o">)</span> 20 minutes ago                         musing_swanson      0B <span class="o">(</span>virtual 88.1MB<span class="o">)</span></code></pre></figure>
+
+<p>So I’ve got 3 containers stopped. I will delete the first one with <code class="highlighter-rouge">docker container rm</code>. The command can take either the <code class="highlighter-rouge">container id</code> or the <code class="highlighter-rouge">container name</code>. So we will delete it and then check again if the container has been deleted with <code class="highlighter-rouge">docker container ls -a -s</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">rm </span>8a6fe93f040b
+8a6fe93f040b
+~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls</span> <span class="nt">-a</span> <span class="nt">-s</span>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                        PORTS               NAMES               SIZE
+a058c5234e4b        ubuntu              <span class="s2">"bash"</span>              23 minutes ago      Exited <span class="o">(</span>127<span class="o">)</span> 16 minutes ago                       silly_lumiere       0B <span class="o">(</span>virtual 88.1MB<span class="o">)</span>
+ad6759ec86c7        ubuntu              <span class="s2">"/bin/bash"</span>         25 minutes ago      Exited <span class="o">(</span>0<span class="o">)</span> 25 minutes ago                         musing_swanson      0B <span class="o">(</span>virtual 88.1MB<span class="o">)</span></code></pre></figure>
+
+<p>You can also run containers with auto deletion adding the <code class="highlighter-rouge">--rm</code> flag so they will be automatically removed after they exit.
+Type in <code class="highlighter-rouge">docker container run --rm -i -t ubuntu bash</code> and type some command.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container run <span class="nt">--rm</span> <span class="nt">-i</span> <span class="nt">-t</span> ubuntu bash
+root@d3c6aad1b015:/# <span class="nb">ls</span> <span class="nt">-la</span>
+total 72
+drwxr-xr-x   1 root root 4096 Feb 21 16:07 <span class="nb">.</span>
+drwxr-xr-x   1 root root 4096 Feb 21 16:07 ..
+<span class="nt">-rwxr-xr-x</span>   1 root root    0 Feb 21 16:07 .dockerenv
+drwxr-xr-x   2 root root 4096 Feb  4 21:05 bin
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root  360 Feb 21 16:07 dev
+drwxr-xr-x   1 root root 4096 Feb 21 16:07 etc
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Feb  4 21:03 lib64
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 media
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 mnt
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 opt
+dr-xr-xr-x 181 root root    0 Feb 21 16:07 proc
+drwx------   2 root root 4096 Feb  4 21:04 root
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 run
+drwxr-xr-x   1 root root 4096 Feb  6 03:37 sbin
+drwxr-xr-x   2 root root 4096 Feb  4 21:02 srv
+dr-xr-xr-x  13 root root    0 Feb 21 15:24 sys
+drwxrwxrwt   2 root root 4096 Feb  4 21:05 tmp
+drwxr-xr-x   1 root root 4096 Feb  4 21:02 usr
+drwxr-xr-x   1 root root 4096 Feb  4 21:04 var</code></pre></figure>
+
+<p>After exiting, type <code class="highlighter-rouge">docker container ls -a</code> and the container shouldn’t be there.</p>
+
+<h1 id="deleting-images">Deleting images</h1>
+<p>Now it’s time to delete the images. Let’s check what images we have by running <code class="highlighter-rouge">docker image ls</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~/docker [chuleh] » docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              47b19964fb50        2 weeks ago         88.1MB
+hello-world         latest              fce289e99eb9        7 weeks ago         1.84kB</code></pre></figure>
+
+<p>We can safely delete the <code class="highlighter-rouge">hello-world</code> image since we’re not going be using it anymore.
+Time to run <code class="highlighter-rouge">docker image rm</code>. Again, it can take <code class="highlighter-rouge">image id</code> or the <code class="highlighter-rouge">image name</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker image <span class="nb">rm </span>fce289e99eb9
+Untagged: hello-world:latest
+Untagged: hello-world@sha256:2557e3c07ed1e38f26e389462d03ed943586f744621577a99efb77324b0fe535
+Deleted: sha256:fce289e99eb9bca977dae136fbe2a82b6b7d4c372474c9235adc1741675f587e
+Deleted: sha256:af0b15c8625bb1938f1d7b17081031f649fd14e6b233688eea3c5483994a66a3</code></pre></figure>
+
+<p>Let’s check if it disappeared with <code class="highlighter-rouge">docker image ls</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~/docker [chuleh] » docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              47b19964fb50        2 weeks ago         88.1MB</code></pre></figure>
+
+<p>Perfect, the <code class="highlighter-rouge">hello-world</code> image is gone.</p>
+
+<h1 id="pruning">Pruning</h1>
+<p>Pruning is a good way for deleting several images or containers in one command.
+Let’s say we want to delete all the containers we’ve got on our system, you would run <code class="highlighter-rouge">docker container prune</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/docker <span class="o">[</span>chuleh] » docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to <span class="k">continue</span>? <span class="o">[</span>y/N] y
+Deleted Containers:
+a058c5234e4b19c45bfa7f346795ab32d5e72a33b74a68c1c0d9a55689b51337
+ad6759ec86c7f5a7ad66af4673f23e3651940ad1b455146b1341a6f7f9053d23
+
+Total reclaimed space: 0B
+~/docker <span class="o">[</span>chuleh] » docker container <span class="nb">ls</span> <span class="nt">-a</span>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES</code></pre></figure>
+
+<p>For images, you would run <code class="highlighter-rouge">docker image prune</code>.</p>
+
+<p>And if you want a total cleanup, you would run <code class="highlighter-rouge">docker system prune</code>. That will delete images, containers, volumes, networks and so forth.</p>
+
+<p>So that’s it for today, stay tuned cause in the next lesson we will take a more in-depth approach at images and port-forwarding.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-02-21T00:00:00-03:00">February 21, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker%3A+Working+With+Containers%20http%3A%2F%2Flocalhost%3A4000%2FDocker-working-with-containers%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FDocker-working-with-containers%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FDocker-working-with-containers%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/intro-to-docker/" class="pagination--pager" title="Intro To Docker
+">Previous</a>
+    
+    
+      <a href="/Docker-port-forwarding/" class="pagination--pager" title="Docker: Port  Forwarding
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

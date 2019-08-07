@@ -1,0 +1,681 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Intro To Vagrant - chule.io</title>
+<meta name="description" content="Hi, in this post we’re going to talk a little bit about Vagrant.So, what is Vagrant? Well, as the website says, Vagrant is a tool for building and managing virtual machines (vm from now). What does this mean? Let’s say you want to fire up a new vm, you’d go through all the hassle of downloading an .iso from the OS you wanted. Then you’d open up VirtualBox, create a new vm, select the network interface, and just click next, next, next and next again.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Intro To Vagrant">
+<meta property="og:url" content="http://localhost:4000/intro-to-vagrant/">
+
+
+  <meta property="og:description" content="Hi, in this post we’re going to talk a little bit about Vagrant.So, what is Vagrant? Well, as the website says, Vagrant is a tool for building and managing virtual machines (vm from now). What does this mean? Let’s say you want to fire up a new vm, you’d go through all the hassle of downloading an .iso from the OS you wanted. Then you’d open up VirtualBox, create a new vm, select the network interface, and just click next, next, next and next again.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-06-14T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/intro-to-vagrant/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Intro To Vagrant">
+    <meta itemprop="description" content="Hi, in this post we’re going to talk a little bit about Vagrant.So, what is Vagrant? Well, as the website says, Vagrant is a tool for building and managing virtual machines (vm from now). What does this mean? Let’s say you want to fire up a new vm, you’d go through all the hassle of downloading an .iso from the OS you wanted. Then you’d open up VirtualBox, create a new vm, select the network interface, and just click next, next, next and next again.">
+    <meta itemprop="datePublished" content="June 14, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Intro To Vagrant
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in this post we’re going to talk a little bit about <a href="https://www.vagrantup.com/" target="_blank">Vagrant</a>.
+So, what is <code class="highlighter-rouge">Vagrant</code>? Well, as the website says, <code class="highlighter-rouge">Vagrant</code> is a tool for building and managing <code class="highlighter-rouge">virtual machines</code> (<code class="highlighter-rouge">vm</code> from now). What does this mean? Let’s say you want to fire up a new <code class="highlighter-rouge">vm</code>, you’d go through all the hassle of downloading an .iso from the OS you wanted. Then you’d open up <a href="https://www.virtualbox.org/" target="_blank">VirtualBox</a>, create a new <code class="highlighter-rouge">vm</code>, select the network interface, and just click next, next, next and next again.</p>
+
+<p>Well, here is where <code class="highlighter-rouge">Vagrant</code> kicks in. <!--more-->Vagrant let’s you automatize this process by writing a <code class="highlighter-rouge">Vagrantfile</code>. In this <code class="highlighter-rouge">Vagrantfile</code> we set up our new <code class="highlighter-rouge">vm</code> and tell Vagrant how we want it to be deployed through a set of parameters.</p>
+
+<p>Ok, time to get our hands dirty. First well need two things:</p>
+<ul>
+  <li>Vagrant</li>
+  <li>VirtuaBox</li>
+</ul>
+
+<h1 id="installing-vagrant">Installing Vagrant</h1>
+<p>I assume you have <code class="highlighter-rouge">VirtualBox</code> installed already. If not, go to <a href="https://www.virtualbox.org/" target="_blank">VirtualBox</a>, download it and install it. Next, we’re going to install <code class="highlighter-rouge">Vagrant</code>. Enter <a href="https://www.vagrantup.com/downloads.html" target="_blank">here</a> and download the binary that suits your OS.
+Also, <code class="highlighter-rouge">Vagrant</code> can be installed from the <code class="highlighter-rouge">cli</code> by using <code class="highlighter-rouge">yum install vagrant -y</code>, <code class="highlighter-rouge">apt-get install vagrant -y</code> or <code class="highlighter-rouge">brew install vagrant -y</code>.</p>
+
+<p>Once Vagrant is installed, let’s create a <code class="highlighter-rouge">Vagrant</code> directory with <code class="highlighter-rouge">mkdir Vagrant</code> and cd into it with <code class="highlighter-rouge">cd Vagrant</code>.
+I already have a <code class="highlighter-rouge">Vagrant</code> directory, so I’m skipping the previous step :).</p>
+
+<h1 id="creating-a-new-vm-with-vagrant">Creating a new VM with Vagrant</h1>
+<p>Enter <a href="https://app.vagrantup.com/boxes/search" target="_blank">here</a> and you will see a list of <code class="highlighter-rouge">vms</code> we can deploy. For this example, I’m going to be using an <code class="highlighter-rouge">ubuntu</code> one. The one named <strong>ubuntu/trusty64</strong>. Make sure to remember the name of <code class="highlighter-rouge">vm</code> you chose, since we will use it in our next step.</p>
+
+<p>Ok, so I will start my <code class="highlighter-rouge">terminal</code> and I will create a new directory inside our Vagrant directory and cd into it.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">~/vagrant <span class="o">[</span>vag-chuleh] » <span class="nb">mkdir </span>ubuntu64
+~/vagrant <span class="o">[</span>vag-chuleh] » <span class="nb">cd </span>ubuntu64</code></pre></figure>
+
+<p>Inside this new directory, is where we’re going to initialize <code class="highlighter-rouge">Vagrant</code>. We’ll do this by typing <code class="highlighter-rouge">vagrant init ubuntu/trusty64</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant/ubuntu64 <span class="o">[</span>vag-chuleh] » vagrant init ubuntu/trusty64
+A <span class="sb">`</span>Vagrantfile<span class="sb">`</span> has been placed <span class="k">in </span>this directory. You are now
+ready to <span class="sb">`</span>vagrant up<span class="sb">`</span> your first virtual environment! Please <span class="nb">read
+</span>the comments <span class="k">in </span>the Vagrantfile as well as documentation on
+<span class="sb">`</span>vagrantup.com<span class="sb">`</span> <span class="k">for </span>more information on using Vagrant.</code></pre></figure>
+
+<p>If everything went correct, we should have our <code class="highlighter-rouge">Vagrantfile</code>. Now it’s time to init our <code class="highlighter-rouge">vm</code>. We will do this by typing <code class="highlighter-rouge">vagrant up</code>.
+This will take a while depending on your internet connection since it has to download the <code class="highlighter-rouge">vm</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » vagrant up
+Bringing machine <span class="s1">'default'</span> up with <span class="s1">'virtualbox'</span> provider...
+<span class="o">==&gt;</span> default: Box <span class="s1">'ubuntu/trusty64'</span> could not be found. Attempting to find and install...
+    default: Box Provider: virtualbox
+
+    <span class="o">[</span>...]
+
+    default: Guest Additions Version: 4.3.36
+    default: VirtualBox Version: 5.2
+<span class="o">==&gt;</span> default: Mounting shared folders...
+    default: /vagrant <span class="o">=&gt;</span> /Users/chuleh/vagrant/ubuntu64</code></pre></figure>
+
+<p>If everything went ok, your output should look something similar to the one above, which means we have a <code class="highlighter-rouge">headless vm</code> running ready to use. Now we can <code class="highlighter-rouge">ssh</code> into the new <code class="highlighter-rouge">vm</code> with the command <code class="highlighter-rouge">vagrant ssh</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » vagrant ssh
+<span class="o">[</span>...]
+vagrant@vagrant-ubuntu-trusty-64:~<span class="err">$</span></code></pre></figure>
+
+<p>Now we’re ready to do everything we want such as we would do with any <code class="highlighter-rouge">vm</code>.</p>
+
+<h1 id="customizing-the-vagrantfile">Customizing the vagrantfile</h1>
+<p>But there’s so much more we can than just firing up a new <code class="highlighter-rouge">vm</code>. Let’s customize our <code class="highlighter-rouge">vagrantfile</code>.
+Open up your <code class="highlighter-rouge">vagrantfile</code> in a text editor and let’s start hacking.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » vim Vagrantfile</code></pre></figure>
+
+<p>By default, <code class="highlighter-rouge">vagrant</code> runs your <code class="highlighter-rouge">vm</code> in <code class="highlighter-rouge">NAT</code> mode, so its <code class="highlighter-rouge">ip address</code> will look something like <code class="highlighter-rouge">10.0.x.x/24</code>. Let’s change that, let’s put it in <code class="highlighter-rouge">bridge mode</code> so it will have a ` static ip<code class="highlighter-rouge"> matching our </code>LAN<code class="highlighter-rouge">.
+Type the following in your </code>vagrantfile`:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">Vagrant</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"ubuntu/trusty64"</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"public_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"192.168.0.50"</span>
+ <span class="k">end</span>
+ </code></pre></figure>
+
+<p>The first two lines you should already have them. The one we’re adding is <code class="highlighter-rouge">config.vm.network "public_network", ip: "new static ip"</code>.
+ If you don’t know what your local <code class="highlighter-rouge">ip</code> is, type <code class="highlighter-rouge">ifconfig -a</code> in your terminal.
+ Now we need to tell <code class="highlighter-rouge">Vagrant</code> about our changes. For that, we’ll run <code class="highlighter-rouge">vagrant reload</code>.
+ Now when you reload, your output should look something similar to this</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"> vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » vagrant reload
+<span class="o">==&gt;</span> default: Attempting graceful shutdown of VM...
+<span class="o">==&gt;</span> default: Checking <span class="k">if </span>box <span class="s1">'ubuntu/trusty64'</span> is up to date...
+<span class="o">==&gt;</span> default: Clearing any previously <span class="nb">set </span>forwarded ports...
+<span class="o">==&gt;</span> default: Clearing any previously <span class="nb">set </span>network interfaces...
+<span class="o">==&gt;</span> default: Available bridged network interfaces:
+1<span class="o">)</span> en0: Wi-Fi <span class="o">(</span>AirPort<span class="o">)</span>
+2<span class="o">)</span> en5: USB Ethernet<span class="o">(</span>?<span class="o">)</span>
+3<span class="o">)</span> p2p0
+4<span class="o">)</span> awdl0
+5<span class="o">)</span> en3: Thunderbolt 1
+6<span class="o">)</span> en1: Thunderbolt 2
+7<span class="o">)</span> en4: Thunderbolt 3
+8<span class="o">)</span> en2: Thunderbolt 4
+9<span class="o">)</span> bridge0
+<span class="o">==&gt;</span> default: When choosing an interface, it is usually the one that is
+<span class="o">==&gt;</span> default: being used to connect to the internet.
+    default: Which interface should the network bridge to?</code></pre></figure>
+
+<p>I’m going to choose number <code class="highlighter-rouge">1</code> since that’s my <code class="highlighter-rouge">nic</code>. But it could change on your end. Once we select our interface, <code class="highlighter-rouge">Vagrant</code> should continue to run. To check if the <code class="highlighter-rouge">static ip</code> was assigned, we can <code class="highlighter-rouge">ping</code> the ip.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » ping 192.168.0.50
+PING 192.168.0.50 <span class="o">(</span>192.168.0.50<span class="o">)</span>: 56 data bytes
+64 bytes from 192.168.0.50: <span class="nv">icmp_seq</span><span class="o">=</span>0 <span class="nv">ttl</span><span class="o">=</span>64 <span class="nb">time</span><span class="o">=</span>0.449 ms
+64 bytes from 192.168.0.50: <span class="nv">icmp_seq</span><span class="o">=</span>1 <span class="nv">ttl</span><span class="o">=</span>64 <span class="nb">time</span><span class="o">=</span>0.554 ms
+^C
+<span class="nt">---</span> 192.168.0.50 ping statistics <span class="nt">---</span>
+2 packets transmitted, 2 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev <span class="o">=</span> 0.449/0.502/0.554/0.053 ms</code></pre></figure>
+
+<p>Perfect, the <code class="highlighter-rouge">ip</code> is responding to our ping. But doing all that would be a hassle and we want to automate as much as possible. So, edit again your <code class="highlighter-rouge">vagrantfile</code> and append the following to <code class="highlighter-rouge">config.vm.network "public_network", ip: "192.168.0.50</code>.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="ss">bridge: </span><span class="s2">"your interface"</span></code></pre></figure>
+
+<p>So your file should look something like this</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># -*- mode: ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
+
+<span class="no">Vagrant</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"ubuntu/trusty64"</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"public_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"192.168.0.50"</span><span class="p">,</span> <span class="ss">bridge: </span><span class="s2">"en0: Wi-Fi (AirPort)"</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Just like we did before, type <code class="highlighter-rouge">vagrant reload</code> for changes to take effect.</p>
+
+<h1 id="provisioning-apps-to-our-vm">Provisioning apps to our VM</h1>
+<p>We can do all sorts of stuff to our <code class="highlighter-rouge">Vagrantfile</code>. Let’s give this <code class="highlighter-rouge">vm</code> a name and let’s install <code class="highlighter-rouge">Nginx</code> on it.
+Edit your <code class="highlighter-rouge">Vagrantfile</code> and type the following</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby">  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provision</span> <span class="ss">:shell</span><span class="p">,</span> <span class="ss">path: </span><span class="s2">"nginx.sh"</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provider</span> <span class="s2">"virtualbox"</span> <span class="k">do</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span>
+  <span class="n">v</span><span class="p">.</span><span class="nf">name</span> <span class="o">=</span> <span class="s2">"nginx_vm"</span>
+  <span class="k">end</span></code></pre></figure>
+
+<p>Your config file should look something like this</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># -*- mode: ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
+
+<span class="no">Vagrant</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"ubuntu/trusty64"</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"public_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"192.168.0.50"</span><span class="p">,</span> <span class="ss">bridge: </span><span class="s2">"en0: Wi-Fi (AirPort)"</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provision</span> <span class="ss">:shell</span><span class="p">,</span> <span class="ss">path: </span><span class="s2">"nginx.sh"</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provider</span> <span class="s2">"virtualbox"</span> <span class="k">do</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span>
+  <span class="n">v</span><span class="p">.</span><span class="nf">name</span> <span class="o">=</span> <span class="s2">"nginx_vm"</span>
+<span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>So now we’re telling <code class="highlighter-rouge">vagrant</code> that we want to give a name to our <code class="highlighter-rouge">vm</code> and we also want it to run a script at startup. Let’s create the <code class="highlighter-rouge">nginx.sh</code> script.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>nginx <span class="nt">-y</span>
+nginx <span class="nt">-t</span>
+systemctl start nginx
+systemctl <span class="nb">enable </span>nginx</code></pre></figure>
+
+<p>Make sure to include the <code class="highlighter-rouge">-y</code> flag! Vagrant is not interactive, it will <strong>fail</strong> if it needs user input. As usual, run <code class="highlighter-rouge">vagrant reload</code> for changes to take effect.</p>
+
+<h1 id="destroying-the-vm">Destroying the VM</h1>
+<p>Once you’re done, destroying the <code class="highlighter-rouge">vm</code> is as simple as typing <code class="highlighter-rouge">vagrant halt</code> to stop it and <code class="highlighter-rouge">vagrant destroy</code> to destroy it.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » vagrant halt
+<span class="o">==&gt;</span> default: Attempting graceful shutdown of VM...
+vagrant/ubuntu64 <span class="o">[</span>vag-chuleh●] » vagrant destroy
+    default: Are you sure you want to destroy the <span class="s1">'default'</span> VM? <span class="o">[</span>y/N] y
+<span class="o">==&gt;</span> default: Destroying VM and associated drives...</code></pre></figure>
+
+<p>And that’s it. Your <code class="highlighter-rouge">vm</code> is gone.</p>
+
+<p>This was just a quick view to all the stuff you can do with <code class="highlighter-rouge">vagrant</code>.
+Hope you enjoyed it!</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-06-14T00:00:00-03:00">June 14, 2018</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Intro+To+Vagrant%20http%3A%2F%2Flocalhost%3A4000%2Fintro-to-vagrant%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fintro-to-vagrant%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fintro-to-vagrant%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/intro-to-ansible/" class="pagination--pager" title="Intro To Ansible
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

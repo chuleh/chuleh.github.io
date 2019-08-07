@@ -1,0 +1,656 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker: Diving Deeper Into Dockerfile - chule.io</title>
+<meta name="description" content="Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to build and run it.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Docker: Diving Deeper Into Dockerfile">
+<meta property="og:url" content="http://localhost:4000/Docker-diving-deeper-into-Dockerfile/">
+
+
+  <meta property="og:description" content="Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to build and run it.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-03-28T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Docker-diving-deeper-into-Dockerfile/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker: Diving Deeper Into Dockerfile">
+    <meta itemprop="description" content="Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to build and run it.">
+    <meta itemprop="datePublished" content="March 28, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Docker: Diving Deeper Into Dockerfile
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in today’s lecture we will continue with our <code class="highlighter-rouge">Dockerfile</code> tutorial. In our <a href="/Docker-what-is-a-Dockerfile/">previous lecture</a> we created a <code class="highlighter-rouge">Dockerfile</code> for our <code class="highlighter-rouge">redis-server</code> and saw how to <code class="highlighter-rouge">build</code> and <code class="highlighter-rouge">run</code> it.</p>
+
+<p>Now, we’re going to create a <code class="highlighter-rouge">node.js</code> web application that says <code class="highlighter-rouge">Hello world</code>. It’s a simple web app, nothing too fancy as I don’t know much about <code class="highlighter-rouge">node.js</code>, the point here is that you grasp the knowledge of how a <code class="highlighter-rouge">Dockerfile</code> is built.</p>
+
+<h1 id="the-nodejs-web-app">The node.js web app</h1>
+<p>As always, I will work on my <code class="highlighter-rouge">docker</code> directory and create a new one called <code class="highlighter-rouge">nodeapp</code> and cd into it.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">~/docker [chuleh●] » mkdir nodeapp &amp;&amp; cd $_
+docker/nodeapp [chuleh●] »</code></pre></figure>
+
+<p>Inside of it, we will create three files. Two are for our <code class="highlighter-rouge">node.js</code> app, the remaining one will be the <code class="highlighter-rouge">Dockerfile</code>. Let’s start with the web app. Open up your text editor and create a file called <code class="highlighter-rouge">package.json</code>, and paste the following code:</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">{
+  "dependencies": {
+    "express": "*"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}</code></pre></figure>
+
+<p>The second file is actually our web app. Create a new file called <code class="highlighter-rouge">index.js</code> and paste this code:</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">const express = require('express');
+
+const app = express();
+
+app.get('/', (req, res) =&gt; {
+  res.send('Hello World');
+});
+
+app.listen(8080, () =&gt; {
+  console.log('Listening on port 8080');
+});</code></pre></figure>
+
+<p>That’s it, we now have the two needed files to run a web application that will return <code class="highlighter-rouge">Hello world</code>.</p>
+
+<h1 id="writing-the-dockerfile">Writing the Dockerfile</h1>
+<p>Now that we’ve got our <code class="highlighter-rouge">node.js</code> app covered, it’s time to focus and what really matters, the <code class="highlighter-rouge">Dockerfile</code>.</p>
+
+<p>As with every single <code class="highlighter-rouge">Dockerfile</code>, the first line will be <code class="highlighter-rouge">FROM</code>. But in this case we’re going to do a little tweak, we will tell <code class="highlighter-rouge">Docker</code> we want to use the <code class="highlighter-rouge">node</code> image, with the <code class="highlighter-rouge">alpine</code> tag.
+<code class="highlighter-rouge">Alpine</code> in the docker world usually means that it is an image that comes installed with the bare minimum to run. It basically is the most lightweight possible image.</p>
+
+<p>So the first line will look like this <code class="highlighter-rouge">FROM node:alpine</code>.</p>
+
+<p>Now we need to <code class="highlighter-rouge">COPY</code> our application into the container. Copy works just the same as the UNIX command so there’s nothing new here.</p>
+
+<p>Type in <code class="highlighter-rouge">COPY ./ ./</code>, this will copy everything from the relative path to the container.</p>
+
+<p>Next we need to tell the image to install <code class="highlighter-rouge">node</code>. So we’re going to use the <code class="highlighter-rouge">RUN</code> command, the one that replicates the shell command we would run.</p>
+
+<p><code class="highlighter-rouge">RUN npm install</code> is the line that follows.</p>
+
+<p>Finally, we need to tell our container what will be the command to execute when it starts.</p>
+
+<p><code class="highlighter-rouge">CMD ["npm", "start"]</code> is the final line we will type.</p>
+
+<p>So your <code class="highlighter-rouge">Dockerfile</code> should look like this:</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">FROM node:alpine
+
+COPY ./ ./
+
+RUN npm install
+
+CMD ["npm", "start"]</code></pre></figure>
+
+<h1 id="building-the-image">Building the image</h1>
+<p>The process is the same, now we have to build our image. For that we will run the <code class="highlighter-rouge">docker build</code> command. Like I did in the previous lesson, I will tag the image with the <code class="highlighter-rouge">-t</code> flag.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nodeapp [chuleh●] » docker build -t chuleh/nodeapp .
+Sending build context to Docker daemon  4.096kB
+Step 1/4 : FROM node:alpine
+ ---&gt; 09084e4ff58d
+Step 2/4 : COPY ./ ./
+ ---&gt; 39ecd43407f4
+Step 3/4 : RUN npm install
+ ---&gt; Running in 0b095f8d21f6
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN !invalid#2 No description
+npm WARN !invalid#2 No repository field.
+npm WARN !invalid#2 No license field.
+
+added 48 packages from 36 contributors and audited 121 packages in 2.35s
+found 0 vulnerabilities
+
+Removing intermediate container 0b095f8d21f6
+ ---&gt; 4937fe21e8bd
+Step 4/4 : CMD ["npm", "start"]
+ ---&gt; Running in 8d9a47d434f7
+Removing intermediate container 8d9a47d434f7
+ ---&gt; 4cc0fa9f67d9
+Successfully built 4cc0fa9f67d9
+Successfully tagged chuleh/nodeapp:latest</code></pre></figure>
+
+<p>Your output should be similar to mine. Pay no attention to the WARN lines. Those are related to the <code class="highlighter-rouge">node.js</code> app, not to the <code class="highlighter-rouge">Dockerfile</code>.</p>
+
+<p>As usual I’ll double check if the image has been built with <code class="highlighter-rouge">docker image ls</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nodeapp [chuleh●] » docker image ls
+REPOSITORY            TAG                 IMAGE ID            CREATED              SIZE
+chuleh/nodeapp        latest              4cc0fa9f67d9        About a minute ago   78.3MB</code></pre></figure>
+
+<h1 id="running-the-container">Running the container</h1>
+<p>Now it’s time to run the container with the image we created. You already know how to do this, <code class="highlighter-rouge">docker container run</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nodeapp [chuleh●] » docker container run chuleh/nodeapp
+
+&gt; @ start /
+&gt; node index.js
+
+Listening on port 8080</code></pre></figure>
+
+<p>The output on your end should be exactly the same as mine.</p>
+
+<h1 id="testing-the-app">Testing the app</h1>
+<p>So now that we’ve got our app running, we should be able to open a browser and go to <code class="highlighter-rouge">localhost:8080</code> or <code class="highlighter-rouge">curl</code> and get the <code class="highlighter-rouge">Hello World</code> message, right? Well, <strong>no</strong>. Let’s see what happens.</p>
+
+<p>Open a new tab on your terminal and type <code class="highlighter-rouge">curl localhost:8080</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nodeapp [chuleh●] » curl localhost:8080
+curl: (7) Failed to connect to localhost port 8080: Connection refused</code></pre></figure>
+
+<p>You see the connection is refused.</p>
+
+<p>What’s happening here? Well, <code class="highlighter-rouge">curl</code> is making a request to our local network on port <code class="highlighter-rouge">8080</code>, but there’s nothing running on our local machine on port <code class="highlighter-rouge">8080</code>. <a href="/Docker-port-forwarding/">Just like we learned</a>, we need to do some port-forwarding to our container.</p>
+
+<p>Go back to the tab where your <code class="highlighter-rouge">node app</code> is running and stop it with <code class="highlighter-rouge">ctrl-c</code>. Now, we will run the container once again with the <code class="highlighter-rouge">-p</code> flag.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nodeapp [chuleh●] » docker container run -p 8080:8080 chuleh/nodeapp
+
+&gt; @ start /
+&gt; node index.js
+
+Listening on port 8080</code></pre></figure>
+
+<p>Now open a new tab on your terminal and <code class="highlighter-rouge">curl localhost:8080</code>.</p>
+
+<figure class="highlight"><pre><code class="language-raw" data-lang="raw">docker/nodeapp [chuleh●] » curl localhost:8080
+Hello World%</code></pre></figure>
+
+<p>And that’s it, we’ve got our <code class="highlighter-rouge">node.js</code> webapp running and docker is doing all the <code class="highlighter-rouge">port-forwarding</code> for us.</p>
+
+<p>As always, hack around the <code class="highlighter-rouge">Dockerfile</code> and stay tuned for in the next post we will dive even deeper. We’ll look at new commands and write the <code class="highlighter-rouge">node.js</code> app that will connect with our <code class="highlighter-rouge">redis-server</code>.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-03-28T00:00:00-03:00">March 28, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker%3A+Diving+Deeper+Into+Dockerfile%20http%3A%2F%2Flocalhost%3A4000%2FDocker-diving-deeper-into-Dockerfile%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FDocker-diving-deeper-into-Dockerfile%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FDocker-diving-deeper-into-Dockerfile%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/Docker-what-is-a-Dockerfile/" class="pagination--pager" title="Docker: What Is A Dockerfile
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-working-with-containers/" rel="permalink">Docker: Working With Containers
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  6 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in this post we’re continuing our series about Docker, if you’re completely new to Docker, I suggest reading my Intro to Docker where you will learn the ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

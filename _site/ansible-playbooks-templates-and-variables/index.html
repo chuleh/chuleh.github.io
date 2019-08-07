@@ -1,0 +1,642 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ansible Playbooks Templates And Variables - chule.io</title>
+<meta name="description" content="Hi, in this post we will continue with our ansible playbooks tutorials. We’ll continue from our last lesson, that was the intro to playbooks. If you haven’t read that one yet, I suggest you go and read it before moving any further with this onesince most of the content we’re going to see is related to the previous post.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Ansible Playbooks Templates And Variables">
+<meta property="og:url" content="http://localhost:4000/ansible-playbooks-templates-and-variables/">
+
+
+  <meta property="og:description" content="Hi, in this post we will continue with our ansible playbooks tutorials. We’ll continue from our last lesson, that was the intro to playbooks. If you haven’t read that one yet, I suggest you go and read it before moving any further with this onesince most of the content we’re going to see is related to the previous post.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-06-27T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/ansible-playbooks-templates-and-variables/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ansible Playbooks Templates And Variables">
+    <meta itemprop="description" content="Hi, in this post we will continue with our ansible playbooks tutorials. We’ll continue from our last lesson, that was the intro to playbooks. If you haven’t read that one yet, I suggest you go and read it before moving any further with this onesince most of the content we’re going to see is related to the previous post.">
+    <meta itemprop="datePublished" content="June 27, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Ansible Playbooks Templates And Variables
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in this post we will continue with our <code class="highlighter-rouge">ansible playbooks</code> tutorials. We’ll continue from our last lesson, that was the <a href="/ansible-playbooks/">intro to playbooks</a>. If you haven’t read that one yet, I suggest you go and read it before moving any further with this one
+since most of the content we’re going to see is related to the previous post.</p>
+
+<p>So, in the last post I said we were going to cover to <code class="highlighter-rouge">templates</code>, <code class="highlighter-rouge">handlers</code>, <code class="highlighter-rouge">vars</code> and that’s what we’re going to do.
+<!--more-->
+In today’s post we’ll see:</p>
+<ul>
+  <li>Templates</li>
+  <li>Vars</li>
+  <li>Handlers</li>
+</ul>
+
+<h1 id="main-role">Main role</h1>
+<p>Let’s continue from our <a href="/ansible-playbooks/">previous post</a>. I suggest you check it out if you haven’t yet, cause we’re going to do stuff covered already there. For today’s example I’ll be using  the config file for my own website. We’re going to create a new <code class="highlighter-rouge">role</code> called <code class="highlighter-rouge">nginx</code>. In this role, we’re going to install <code class="highlighter-rouge">nginx</code>, create the configuration file for the site, create a symbolic link from <code class="highlighter-rouge">sites-available</code> directory to <code class="highlighter-rouge">sites-enabled</code> and finally <code class="highlighter-rouge">restart</code> nginx.
+Of course, we’re going to do all of this adding new stuff. We will be using <code class="highlighter-rouge">templates</code>, <code class="highlighter-rouge">variables</code> and <code class="highlighter-rouge">handlers</code>.</p>
+
+<p>But let’s not get ahead of ourselves, let’s start with the <code class="highlighter-rouge">template</code>. Inside the <code class="highlighter-rouge">nginx</code> directory, let’s create a <code class="highlighter-rouge">templates</code>, <code class="highlighter-rouge">handlers</code> and <code class="highlighter-rouge">vars</code> directory. If you haven’t created the <code class="highlighter-rouge">nginx</code> directory, do it now. I will do all of this in my <code class="highlighter-rouge">tmp</code> directory.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">/tmp » <span class="nb">mkdir</span> <span class="nt">-p</span> nginx/<span class="o">{</span>tasks,templates,handlers,vars<span class="o">}</span></code></pre></figure>
+
+<p>Now, <code class="highlighter-rouge">cd</code> into our <code class="highlighter-rouge">tasks</code> directory and let’s create the <code class="highlighter-rouge">main.yml</code> file for nginx:</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">run apt-get update</span>
+  <span class="na">apt</span><span class="pi">:</span>
+    <span class="na">update_cache</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">cache_valid_time</span><span class="pi">:</span> <span class="m">3600</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">install nginx</span>
+  <span class="na">apt</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+    <span class="na">state</span><span class="pi">:</span> <span class="s">present</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">create config for site</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">src</span><span class="pi">:</span> <span class="s">lcasaretto.com.j2</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">/etc/nginx/sites-available/{{ site.name }}</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">symlink new site to sites-enabled/</span>
+  <span class="na">file</span><span class="pi">:</span>
+    <span class="na">src</span><span class="pi">:</span> <span class="s">/etc/nginx/sites-available/{{ site.name }}</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">/etc/nginx/sites-enabled/{{ site.name }}</span>
+    <span class="na">state</span><span class="pi">:</span> <span class="s">link</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">check nginx config</span>
+  <span class="na">command</span><span class="pi">:</span> <span class="s">nginx -t</span>
+  <span class="na">notify</span><span class="pi">:</span> <span class="s">restart nginx</span></code></pre></figure>
+
+<p>Everything should be pretty straightforward so far, until we hit the line where it says <code class="highlighter-rouge">template</code>. See it? That’s how you declare a template. Let’s take a deeper look into it.</p>
+
+<h1 id="templates">Templates</h1>
+<p><code class="highlighter-rouge">Templates</code> is an ansible module that allows us to use our own text files, like config files, and replace them on the destination server.
+<code class="highlighter-rouge">Templates</code> are processed by the <code class="highlighter-rouge">Jinja2</code> formatting language, meaning that this opens a whole scenario of variables that we can pass to our templates.
+So, to declare a template file, you just type down <code class="highlighter-rouge">template</code>, the <code class="highlighter-rouge">source</code> and the <code class="highlighter-rouge">destination</code> on the remote server. Ansible is smart and will look for our template file in our <code class="highlighter-rouge">templates</code> directory.</p>
+
+<p>If you paid attention, you’ll see that it also says <code class="highlighter-rouge">{{ site.name }}</code>, that’s a variable and we’ll cover it later.
+As I said starting today’s post, I’ll be using my own website for today’s example. So I’ll create a file called <code class="highlighter-rouge">lcasaretto.com.j2</code>. Pay attention to the <code class="highlighter-rouge">j2</code> extension, that’s our <code class="highlighter-rouge">Jinja2</code> template file.</p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text">server {
+  listen 80;
+  server_name {{ site.name }} {{ site.serveralias }};
+  root {{ site.rootdir }};
+  access_log  /var/log/nginx/{{ site.name }}-access.log;
+  error_log  /var/log/nginx/{{ site.name }}-error.log;
+
+  gzip             on;
+  gzip_comp_level  3;
+  gzip_types       text/html text/plain text/css image/*;
+
+}</code></pre></figure>
+
+<p>So that’s the configuration file for my website. Let’s break it down a little bit. It says that it’s going to listen on port 80. The <code class="highlighter-rouge">server_name</code>
+has two variables: <code class="highlighter-rouge">{{ site.name }} {{ site.serveralias }}</code> which we will cover next. The same goes for <code class="highlighter-rouge">access</code> and <code class="highlighter-rouge">error</code> log.</p>
+
+<h1 id="variables">Variables</h1>
+<p>Now it’s time to cover the <code class="highlighter-rouge">variables</code>. Variables are just that, <code class="highlighter-rouge">vars</code>, pieces of text that can be reused making your automation easier.
+Remember we created the <code class="highlighter-rouge">vars</code> directory? <code class="highlighter-rouge">cd</code> into it and create a <code class="highlighter-rouge">main.yml</code> file which will contain all of our variables.</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="na">site</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">lcasaretto.com</span>
+  <span class="na">serveralias</span><span class="pi">:</span> <span class="s">www.lcasaretto.com</span>
+  <span class="na">rootdir</span><span class="pi">:</span> <span class="s">/mnt/efs/lcasaretto.com/_site/</span></code></pre></figure>
+
+<p>As you can see, the file starts with <code class="highlighter-rouge">site:</code>. Why? Because the vars we named started with <code class="highlighter-rouge">site.variable</code>. So we have the <code class="highlighter-rouge">name</code>, <code class="highlighter-rouge">serveralias</code> and <code class="highlighter-rouge">rootdir</code> variables defined, which are the ones we were calling earlier in our <code class="highlighter-rouge">template</code> file.</p>
+
+<h1 id="handlers">Handlers</h1>
+<p>Now it’s time to create the <code class="highlighter-rouge">handlers</code> file. So what’s a <code class="highlighter-rouge">handler</code>? It’s like regular task, but it only happens when there’s a <code class="highlighter-rouge">notify</code> directive in the playbook.
+We have already created the <code class="highlighter-rouge">handlers</code> directory, <code class="highlighter-rouge">cd</code> into it and create a <code class="highlighter-rouge">main.yml</code> file.</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">restart nginx</span>
+  <span class="na">service</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+    <span class="na">state</span><span class="pi">:</span> <span class="s">restarted</span></code></pre></figure>
+
+<p>If you go <code class="highlighter-rouge">tasks/main.yml</code> you’ll see that our last line has a <code class="highlighter-rouge">notify</code> calling this <code class="highlighter-rouge">handler</code>.</p>
+
+<p>Now, all that remains is running <code class="highlighter-rouge">ansible-playbook</code>. In my case, it will return <code class="highlighter-rouge">ok</code> on some stuff because <code class="highlighter-rouge">nginx</code> is already installed, and the configuration files are present, as well. Also, I already have <code class="highlighter-rouge">lcasaretto1</code>  defined in my <code class="highlighter-rouge">/etc/ansible/hosts</code> file.</p>
+
+<figure class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="s">» ansible-playbook site.yml -l lcasaretto1 -t nginx</span>
+
+<span class="s">PLAY [lcasaretto] ******************************************************************************************************************************************************************************************</span>
+
+<span class="s">TASK [Gathering Facts] *************************************************************************************************************************************************************************************</span>
+<span class="na">ok</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">TASK [nginx</span> <span class="pi">:</span> <span class="s">run apt-get update] **************************************************************************************************************************************************************************</span>
+<span class="na">changed</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">TASK [nginx</span> <span class="pi">:</span> <span class="s">install nginx] *******************************************************************************************************************************************************************************</span>
+<span class="na">ok</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">TASK [nginx</span> <span class="pi">:</span> <span class="s">create config for site] **********************************************************************************************************************************************************************</span>
+<span class="na">ok</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">TASK [nginx</span> <span class="pi">:</span> <span class="s">symlink new site to sites-enabled/] **********************************************************************************************************************************************************</span>
+<span class="na">ok</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">TASK [nginx</span> <span class="pi">:</span> <span class="s">check nginx config] **************************************************************************************************************************************************************************</span>
+<span class="na">changed</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">RUNNING HANDLER [nginx</span> <span class="pi">:</span> <span class="s">restart nginx] ********************************************************************************************************************************************************************</span>
+<span class="na">changed</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lcasaretto1</span><span class="pi">]</span>
+
+<span class="s">PLAY RECAP *************************************************************************************************************************************************************************************************</span>
+<span class="na">lcasaretto1                </span><span class="pi">:</span> <span class="s">ok=7    changed=3    unreachable=0    failed=0</span></code></pre></figure>
+
+<p>So that’s pretty much everything, make sure you go by each of the steps carefully and slowly since we have covered a lot of stuff.
+Stay tuned for the next post, in which we’ll cover how to make decisions with ansible.</p>
+
+<p>:wq</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2018-06-27T00:00:00-03:00">June 27, 2018</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Ansible+Playbooks+Templates+And+Variables%20http%3A%2F%2Flocalhost%3A4000%2Fansible-playbooks-templates-and-variables%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fansible-playbooks-templates-and-variables%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fansible-playbooks-templates-and-variables%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/ansible-playbooks/" class="pagination--pager" title="Ansible Playbooks
+">Previous</a>
+    
+    
+      <a href="/ansible-playbooks-decisions/" class="pagination--pager" title="Ansible Playbooks Decisions
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-port-forwarding/" rel="permalink">Docker: Port  Forwarding
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue where we left off with our docker series. If you haven’t read the previous posts, I recommend doing so. There’s the Intr...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
