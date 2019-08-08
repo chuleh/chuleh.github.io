@@ -53,4 +53,14 @@ var store = [{
         "excerpt":"Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to build and run it. Now, we’re going to create a node.js web application that says Hello world. It’s a simple web app, nothing too...","categories": [],
         "tags": [],
         "url": "http://localhost:4000/Docker-diving-deeper-into-Dockerfile/",
+        "teaser":null},{
+        "title": "Docker: Workdir And Rebuilds",
+        "excerpt":"Hi, in today’s post we will continue from where we left off with our Docker series. We’re going to work with the Dockerfile from our previous lesson and work with the nodeapp container. We will also take at rebuilds and how to best avoid them. Dockerfile WORKDIR Fire up the...","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/Docker-WORKDIR-and-rebuilds/",
+        "teaser":null},{
+        "title": "Docker: Docker Compose",
+        "excerpt":"Hi, in today’s post we will take a look at a new command: docker-compose. For this, we will create new nodejs app that will act as a visitor counter from the old days. We will do a very basic docker-compose example, but should be enough to showcase the power of...","categories": [],
+        "tags": [],
+        "url": "http://localhost:4000/Docker-Docker-compose/",
         "teaser":null}]
