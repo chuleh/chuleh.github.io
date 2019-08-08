@@ -1,0 +1,807 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker: Workdir And Rebuilds - chule.io</title>
+<meta name="description" content="Hi, in today’s post we will continue from where we left off with our Docker series. We’re going to work with the Dockerfile from our previous lesson and work with the nodeapp container.We will also take at rebuilds and how to best avoid them.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Docker: Workdir And Rebuilds">
+<meta property="og:url" content="http://localhost:4000/Docker-WORKDIR-and-rebuilds/">
+
+
+  <meta property="og:description" content="Hi, in today’s post we will continue from where we left off with our Docker series. We’re going to work with the Dockerfile from our previous lesson and work with the nodeapp container.We will also take at rebuilds and how to best avoid them.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-04-01T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Docker-WORKDIR-and-rebuilds/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker: Workdir And Rebuilds">
+    <meta itemprop="description" content="Hi, in today’s post we will continue from where we left off with our Docker series. We’re going to work with the Dockerfile from our previous lesson and work with the nodeapp container.We will also take at rebuilds and how to best avoid them.">
+    <meta itemprop="datePublished" content="April 01, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Docker: Workdir And Rebuilds
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  10 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in today’s post we will continue from where we left off with our Docker series. We’re going to work with the Dockerfile from our <a href="/Docker-diving-deeper-into-Dockerfile/">previous lesson</a> and work with the nodeapp container.
+We will also take at rebuilds and how to best avoid them.</p>
+
+<h1 id="dockerfile-workdir">Dockerfile WORKDIR</h1>
+
+<p>Fire up the container from the previous post and list the content inside of it.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh] » docker container run <span class="nt">-i</span> <span class="nt">-t</span> chuleh/nodeapp sh
+/ <span class="c"># ls -l</span>
+total 88
+<span class="nt">-rw-r--r--</span>    1 root     root            67 Mar 24 23:17 Dockerfile
+drwxr-xr-x    1 root     root          4096 Mar 18 21:53 bin
+drwxr-xr-x    5 root     root           360 Mar 25 00:26 dev
+drwxr-xr-x    1 root     root          4096 Mar 25 00:26 etc
+drwxr-xr-x    1 root     root          4096 Mar 18 21:20 home
+<span class="nt">-rw-r--r--</span>    1 root     root           192 Mar 24 22:52 index.js
+drwxr-xr-x    1 root     root          4096 Mar  4 15:43 lib
+drwxr-xr-x    5 root     root          4096 Mar  4 15:43 media
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 mnt
+drwxr-xr-x   51 root     root          4096 Mar 24 23:18 node_modules
+drwxr-xr-x    1 root     root          4096 Mar 18 21:53 opt
+<span class="nt">-rw-r--r--</span>    1 root     root         13052 Mar 24 23:18 package-lock.json
+<span class="nt">-rw-r--r--</span>    1 root     root            96 Mar 24 22:51 package.json
+dr-xr-xr-x  182 root     root             0 Mar 25 00:26 proc
+drwx------    1 root     root          4096 Mar 25 00:26 root
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 run
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 sbin
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 srv
+dr-xr-xr-x   13 root     root             0 Mar 25 00:26 sys
+drwxrwxrwt    1 root     root          4096 Mar 18 21:53 tmp
+drwxr-xr-x    1 root     root          4096 Mar 18 21:53 usr
+drwxr-xr-x    1 root     root          4096 Mar  4 15:43 var
+</code></pre></div></div>
+<p>As you can see, we have several files scattered around the filesystem. This is usually a <strong>bad</strong> practice. Why’s that? Well, imagine you have /lib directory for your project. When you tell your Dockerfileto do COPY ./ ./ it will overwrite your filesystem’s /lib directory and will probably mess up your container.</p>
+
+<p>Fortunately there’s a solution for this: WORKDIR. This is a new command we will start using from now on. WOKDIR is pretty simple, you just type WORKDIR and the path that will be your new working directory.</p>
+
+<p>Start your text editor and open the Dockerfile from our previous lesson. Inside of it, right below the FROM command we will type in our WORKDIR. I will use /app. Docker’s smart enough to create the directory for us if it doesn’t exist.</p>
+
+<p>So your Dockerfile now should look like this</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM node:alpine
+
+WORKDIR /app
+
+COPY ./ ./
+
+RUN npm <span class="nb">install
+
+</span>CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+</code></pre></div></div>
+
+<p>I’m using /app, but you could use /usr/app or any other name that comes to your mind.</p>
+
+<h1 id="rebuilding-the-image">Rebuilding the image</h1>
+<p>If you’re still inside the container, exit. It’s time to rebuild the image. What do you think is going to happen when we build our image again? Let’s find out.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker build <span class="nt">-t</span> chuleh/nodeapp <span class="nb">.</span>
+Sending build context to Docker daemon  4.096kB
+Step 1/5 : FROM node:alpine
+ <span class="nt">---</span><span class="o">&gt;</span> 09084e4ff58d
+Step 2/5 : WORKDIR /app
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> e4c764a3b068
+Step 3/5 : COPY ./ ./
+ <span class="nt">---</span><span class="o">&gt;</span> 4f60c019e639
+Step 4/5 : RUN npm <span class="nb">install</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>b09a202d51c8
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN app No description
+npm WARN app No repository field.
+npm WARN app No license field.
+
+added 48 packages from 36 contributors and audited 121 packages <span class="k">in </span>2.92s
+found 0 vulnerabilities
+
+Removing intermediate container b09a202d51c8
+ <span class="nt">---</span><span class="o">&gt;</span> 54e7a1431308
+Step 5/5 : CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>d5fd1ccb87f3
+Removing intermediate container d5fd1ccb87f3
+ <span class="nt">---</span><span class="o">&gt;</span> 6ab55ea3f0ef
+Successfully built 6ab55ea3f0ef
+Successfully tagged chuleh/nodeapp:latest
+</code></pre></div></div>
+
+<p>As you can see, since we made a change to the Dockerfile, every other command will be run again meaning we will rebuild our image from scratch.</p>
+
+<h1 id="starting-the-container">Starting the container</h1>
+<p>Now that we have our new image, it’s time to run our container again, this time I will do it detached. By now you should already know how to do this.
+I will run the container and curl localhost to see if it’s working.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker container run <span class="nt">-p</span> 8080:8080 <span class="nt">-d</span> chuleh/nodeapp
+402e7b40dcb21a45680f4567ecb3771bf29ecaa4b12be70a76b44ed0f582dc02
+docker/nodeapp <span class="o">[</span>chuleh●] » curl localhost:8080
+Hello World
+</code></pre></div></div>
+
+<p>Now it’s time to check if our WORKDIR directive worked. To do this we will use docker exec to get a shell inside our container. First I will check the ID of my container with docker ps and then will attach to it.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                    NAMES
+402e7b40dcb2        chuleh/nodeapp      <span class="s2">"npm start"</span>         2 minutes ago       Up 2 minutes        0.0.0.0:8080-&gt;8080/tcp   keen_lumiere
+docker/nodeapp <span class="o">[</span>chuleh●] » docker <span class="nb">exec</span> <span class="nt">-i</span> <span class="nt">-t</span> 402e7b40dcb2 sh
+/app <span class="c">#</span>
+</code></pre></div></div>
+
+<p>Notice how my prompt immediately changed to /app. List the contents of the directory, you should have all of your files in there. And if you go one directory back into the rootdir, the files shouldn’t be there since we rebuilt the image.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/app <span class="c"># ls -l</span>
+total 32
+<span class="nt">-rw-r--r--</span>    1 root     root            81 Mar 25 00:38 Dockerfile
+<span class="nt">-rw-r--r--</span>    1 root     root           192 Mar 24 22:52 index.js
+drwxr-xr-x   51 root     root          4096 Mar 25 00:43 node_modules
+<span class="nt">-rw-r--r--</span>    1 root     root         13052 Mar 25 00:43 package-lock.json
+<span class="nt">-rw-r--r--</span>    1 root     root            96 Mar 24 22:51 package.json
+/app <span class="c"># cd ../</span>
+/ <span class="c"># ls -l</span>
+total 60
+drwxr-xr-x    1 root     root          4096 Mar 25 00:43 app
+drwxr-xr-x    1 root     root          4096 Mar 18 21:53 bin
+drwxr-xr-x    5 root     root           340 Mar 25 00:51 dev
+drwxr-xr-x    1 root     root          4096 Mar 25 00:51 etc
+drwxr-xr-x    1 root     root          4096 Mar 18 21:20 home
+drwxr-xr-x    1 root     root          4096 Mar  4 15:43 lib
+drwxr-xr-x    5 root     root          4096 Mar  4 15:43 media
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 mnt
+drwxr-xr-x    1 root     root          4096 Mar 18 21:53 opt
+dr-xr-xr-x  183 root     root             0 Mar 25 00:51 proc
+drwx------    1 root     root          4096 Mar 25 00:55 root
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 run
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 sbin
+drwxr-xr-x    2 root     root          4096 Mar  4 15:43 srv
+dr-xr-xr-x   13 root     root             0 Mar 25 00:51 sys
+drwxrwxrwt    1 root     root          4096 Mar 18 21:53 tmp
+drwxr-xr-x    1 root     root          4096 Mar 18 21:53 usr
+drwxr-xr-x    1 root     root          4096 Mar  4 15:43 var
+</code></pre></div></div>
+
+<p>If you pay attention to detail, you’ll see that in our /app directory we have a new one called node_modules. We will look into that.</p>
+
+<h1 id="rebuilds-and-how-to-avoid-them">Rebuilds and how to avoid them</h1>
+<p>There’s one last thing I’d like us to look at before moving any forward. Start your text editor and open up the index.js file. If you copy-pasted the file just like I wrote it down in the previous post, line 6 should be your Hello World line.</p>
+
+<p>Change the Hello World message to whatever you want. I will type Bye World (super original). Save the file and exit.
+Now, if you curl localhost:8080 again, what do you think will happen? Nothing.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » curl localhost:8080
+Hello World
+</code></pre></div></div>
+
+<p>What’s going on? Every time we create an image, we’re taking a snapshot of the filesystem. So we took a snapshot of index.js after it got copied over, meaning we’re running an older version of index.js in our container. This also means that changes are not automatically reflected in our container.
+So how do we get our changes running in the container? The main thing you’d be thinking is to rebuild. Let’s try doing that and then we will look into a better solution.</p>
+
+<p>I will stop the container and rebuild it. Then I will start the container and curl localhost:8080.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                    NAMES
+402e7b40dcb2        chuleh/nodeapp      <span class="s2">"npm start"</span>         22 minutes ago      Up 22 minutes       0.0.0.0:8080-&gt;8080/tcp   keen_lumiere
+docker/nodeapp <span class="o">[</span>chuleh●] » docker container stop 402e7b40dcb2
+402e7b40dcb2
+docker/nodeapp <span class="o">[</span>chuleh●] » docker build <span class="nt">-t</span> chuleh/nodeapp <span class="nb">.</span>
+Sending build context to Docker daemon  4.096kB
+Step 1/5 : FROM node:alpine
+ <span class="nt">---</span><span class="o">&gt;</span> 09084e4ff58d
+Step 2/5 : WORKDIR /app
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> e4c764a3b068
+Step 3/5 : COPY ./ ./
+ <span class="nt">---</span><span class="o">&gt;</span> 7992fcee12f9
+Step 4/5 : RUN npm <span class="nb">install</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>4312d94d0865
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN app No description
+npm WARN app No repository field.
+npm WARN app No license field.
+
+added 48 packages from 36 contributors and audited 121 packages <span class="k">in </span>2.49s
+found 0 vulnerabilities
+
+Removing intermediate container 4312d94d0865
+ <span class="nt">---</span><span class="o">&gt;</span> 3b9a2fc4af19
+Step 5/5 : CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>098bd6172512
+Removing intermediate container 098bd6172512
+ <span class="nt">---</span><span class="o">&gt;</span> 1f65862b6858
+Successfully built 1f65862b6858
+Successfully tagged chuleh/nodeapp:latest
+</code></pre></div></div>
+<p>As you can see, the image has been rebuilt from scratch.</p>
+
+<p>Now let’s run the container and curl localhost.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker container run <span class="nt">-p</span> 8080:8080 <span class="nt">-d</span> chuleh/nodeapp
+7e53f12eb2dcaf51670aeb7891f358503d734493454b3446cf9b8babf1506473
+docker/nodeapp <span class="o">[</span>chuleh●] » curl localhost:8080
+Bye World
+</code></pre></div></div>
+
+<p>The change is in effect. This was rather fast, but going through all of this when you’re working in larger projects is really a pain. Let’s find out a better way to tell docker we want to make some changes without going through all the fuss of rebuilding.</p>
+
+<h1 id="editing-the-dockerfile-again">Editing the Dockerfile (again)</h1>
+<p>We know that the Dockerfile is a series of instructions saying how we want our container to behave. We also know, or at least you’ll know now, that node needs the package.json to run. That’s all it cares about.
+So what if we changed the order in which files are copied? Start your text editor and open up the Dockerfile. We’re going to split the COPY instruction, into two.</p>
+
+<p>Go to the COPY line and type in the following</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COPY ./package.json ./
+</code></pre></div></div>
+
+<p>Below you should have the RUN npm install line. And below that, type the following line COPY ./ ./. Your Dockerfile should look like this.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM node:alpine
+
+WORKDIR /app
+
+COPY ./package.json ./
+
+RUN npm <span class="nb">install
+
+</span>COPY ./ ./
+
+CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+</code></pre></div></div>
+<p>What’s going to happen now? We can make all the changes that we want to our files and it won’t invalidate the building process. The only time npm install will be run again, is if we change any of the steps above it. So what have you learned? <strong>Order matters</strong> in a Dockerfile.</p>
+
+<h1 id="rebuilding-the-image-1">Rebuilding the image</h1>
+<p>Now, let’s rebuild the image and see what happens. First I’ll stop the container, then I will rebuild the image.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                    NAMES
+7e53f12eb2dc        chuleh/nodeapp      <span class="s2">"npm start"</span>         17 minutes ago      Up 17 minutes       0.0.0.0:8080-&gt;8080/tcp   tender_tereshkova
+docker/nodeapp <span class="o">[</span>chuleh●] » docker container stop 7e53f12eb2dc
+7e53f12eb2dc
+docker/nodeapp <span class="o">[</span>chuleh●] » docker build <span class="nt">-t</span> chuleh/nodeapp <span class="nb">.</span>
+Sending build context to Docker daemon  4.096kB
+Step 1/6 : FROM node:alpine
+ <span class="nt">---</span><span class="o">&gt;</span> 09084e4ff58d
+Step 2/6 : WORKDIR /app
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> e4c764a3b068
+Step 3/6 : COPY ./package.json ./
+ <span class="nt">---</span><span class="o">&gt;</span> af8e04c73fbd
+Step 4/6 : RUN npm <span class="nb">install</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>509db6ac296b
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN app No description
+npm WARN app No repository field.
+npm WARN app No license field.
+
+added 48 packages from 36 contributors and audited 121 packages <span class="k">in </span>2.672s
+found 0 vulnerabilities
+
+Removing intermediate container 509db6ac296b
+ <span class="nt">---</span><span class="o">&gt;</span> 883ab345b1c9
+Step 5/6 : COPY ./ ./
+ <span class="nt">---</span><span class="o">&gt;</span> f736f9c1ff1f
+Step 6/6 : CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>64168adf8003
+Removing intermediate container 64168adf8003
+ <span class="nt">---</span><span class="o">&gt;</span> 937494f32de7
+Successfully built 937494f32de7
+Successfully tagged chuleh/nodeapp:latest
+</code></pre></div></div>
+
+<p>The build ran successfully, but it still had to run all the commands again. This was expected as we edited the Dockerfile.
+Now, let’s edit the index.js again. Where I wrote Bye world, I will type how you doing? and will rebuild the image. What do you think is going to happen this time? Let’s find out.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker build <span class="nt">-t</span> chuleh/nodeapp <span class="nb">.</span>
+Sending build context to Docker daemon  4.096kB
+Step 1/6 : FROM node:alpine
+ <span class="nt">---</span><span class="o">&gt;</span> 09084e4ff58d
+Step 2/6 : WORKDIR /app
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> e4c764a3b068
+Step 3/6 : COPY ./package.json ./
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> af8e04c73fbd
+Step 4/6 : RUN npm <span class="nb">install</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> 883ab345b1c9
+Step 5/6 : COPY ./ ./
+ <span class="nt">---</span><span class="o">&gt;</span> 1b1e3012dccc
+Step 6/6 : CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>edb4e9c77e00
+Removing intermediate container edb4e9c77e00
+ <span class="nt">---</span><span class="o">&gt;</span> 1ce73d7510bc
+Successfully built 1ce73d7510bc
+Successfully tagged chuleh/nodeapp:latest
+</code></pre></div></div>
+<p>You can see that the output is filled with Using cache lines and that in ran way faster than it ran in the previous time. That’s because the only changed that we made, was the COPY ./ ./ step.</p>
+
+<p>Let’s run the container again and curl it to see if the changes were made.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker/nodeapp <span class="o">[</span>chuleh●] » docker container run <span class="nt">-p</span> 8080:8080 <span class="nt">-d</span> chuleh/nodeapp
+4de0b6265a475f22c09b8a639d48c6e3fb3167fd95fda4398c4f1a1d0955adc3
+docker/nodeapp <span class="o">[</span>chuleh●] » curl localhost:8080
+How you doing?
+</code></pre></div></div>
+
+<p>And that’s it. We’ve got our image running way faster than it was before with just a few tweaks. Remember, <strong>order matters</strong>.
+As always, stay tuned for in the next lesson we’ll take a look at a different node.js app and we will take a first look at docker-compose.</p>
+
+<p><code class="highlighter-rouge">:wq</code></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-04-01T00:00:00-03:00">April 01, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker%3A+Workdir+And+Rebuilds%20http%3A%2F%2Flocalhost%3A4000%2FDocker-WORKDIR-and-rebuilds%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FDocker-WORKDIR-and-rebuilds%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FDocker-WORKDIR-and-rebuilds%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/Docker-diving-deeper-into-Dockerfile/" class="pagination--pager" title="Docker: Diving Deeper Into Dockerfile
+">Previous</a>
+    
+    
+      <a href="/Docker-Docker-compose/" class="pagination--pager" title="Docker: Docker Compose
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-Docker-compose/" rel="permalink">Docker: Docker Compose
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  8 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will take a look at a new command: docker-compose.
+For this, we will create new nodejs app that will act as a visitor counter from the...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

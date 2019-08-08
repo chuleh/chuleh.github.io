@@ -1,0 +1,735 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.5 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker: Docker Compose - chule.io</title>
+<meta name="description" content="Hi, in today’s post we will take a look at a new command: docker-compose.For this, we will create new nodejs app that will act as a visitor counter from the old days.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="chule.io">
+<meta property="og:title" content="Docker: Docker Compose">
+<meta property="og:url" content="http://localhost:4000/Docker-Docker-compose/">
+
+
+  <meta property="og:description" content="Hi, in today’s post we will take a look at a new command: docker-compose.For this, we will create new nodejs app that will act as a visitor counter from the old days.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-04-06T00:00:00-03:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/Docker-Docker-compose/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "chule",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="chule.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          chule.io
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">chule</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>DevOps Engineer, yoga ashtanga practitioner and longboard rider</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Buenos Aires, Argentina</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:lcasarettom@gmail.com">
+            <meta itemprop="email" content="lcasarettom@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker: Docker Compose">
+    <meta itemprop="description" content="Hi, in today’s post we will take a look at a new command: docker-compose.For this, we will create new nodejs app that will act as a visitor counter from the old days.">
+    <meta itemprop="datePublished" content="April 06, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Docker: Docker Compose
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  8 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Hi, in today’s post we will take a look at a new command: <code class="highlighter-rouge">docker-compose</code>.
+For this, we will create new nodejs app that will act as a visitor counter from the old days.</p>
+
+<p>We will do a very basic docker-compose example, but should be enough to showcase the power of it.</p>
+
+<h1 id="writing-the-nodejs-app">Writing the nodejs app</h1>
+<p>The nodejs app is pretty basic as I don’t have much knowledge of nodejs, it’s code I came across the internet just by doing a google search.
+As always, I will work on my docker directory and create a new one called node-visits-app.
+In that same directory, we will create two files, index.js and package.json.
+Let’s start with the index.js, open up your text editor and paste the following code:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const express <span class="o">=</span> require<span class="o">(</span><span class="s1">'express'</span><span class="o">)</span><span class="p">;</span>
+const redis <span class="o">=</span> require<span class="o">(</span><span class="s1">'redis'</span><span class="o">)</span><span class="p">;</span>
+
+const app <span class="o">=</span> express<span class="o">()</span><span class="p">;</span>
+const client <span class="o">=</span> redis.createClient<span class="o">({</span>
+  host:<span class="s1">'redis-server'</span>,
+  port: 6379
+<span class="o">})</span><span class="p">;</span>
+client.set<span class="o">(</span><span class="s1">'visits'</span>, 0<span class="o">)</span><span class="p">;</span>
+
+app.get<span class="o">(</span><span class="s1">'/'</span>, <span class="o">(</span>req, res<span class="o">)</span> <span class="o">=&gt;</span> <span class="o">{</span>
+  client.get<span class="o">(</span><span class="s1">'visits'</span>, <span class="o">(</span>err, visits<span class="o">)</span> <span class="o">=&gt;</span> <span class="o">{</span>
+    res.send<span class="o">(</span><span class="s1">'Number of visits is '</span> + visits<span class="o">)</span><span class="p">;</span>
+    client.set<span class="o">(</span><span class="s1">'visits'</span>, parseInt<span class="o">(</span>visits<span class="o">)</span> + 1<span class="o">)</span><span class="p">;</span>
+  <span class="o">})</span><span class="p">;</span>
+<span class="o">})</span><span class="p">;</span>
+
+app.listen<span class="o">(</span>8081, <span class="o">()</span> <span class="o">=&gt;</span> <span class="o">{</span>
+  console.log<span class="o">(</span><span class="s1">'Listening on port 8081'</span><span class="o">)</span><span class="p">;</span>
+<span class="o">})</span><span class="p">;</span>
+</code></pre></div></div>
+<p>Just copy and paste the code, I promise you it will work.</p>
+
+<p>Onto the package.json file. Again, in your text editor create a new file called package.json and paste the following code:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
+  <span class="s2">"dependencies"</span>: <span class="o">{</span>
+    <span class="s2">"express"</span>: <span class="s2">"*"</span>,
+    <span class="s2">"redis"</span>: <span class="s2">"2.8.0"</span>
+  <span class="o">}</span>,
+  <span class="s2">"scripts"</span>: <span class="o">{</span>
+    <span class="s2">"start"</span>: <span class="s2">"node index.js"</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h1 id="writing-the-dockerfile">Writing the Dockerfile</h1>
+<p>Good, now that we have the two files for the node app we can focus on our Dockerfile. It will be very similar to the one we’ve been working with.
+This should be pretty straight forward, but just in case, let’s go over it once again.
+The first line will be FROM, this is mandatory. There we will specify the base image we will use, in this case it’s node:alpine.
+Next we will specify our WORKDIR, in my case I’ll use ‘/app’, but remember this can be anything you want.
+Then, as we learned in our <a href="/Docker-WORKDIR-and-rebuilds/">previous lesson</a> we need to copy our package.json into the WORKDIR, so type in COPY package.json .
+RUN npm install comes next.
+After the installation, we’ll copy all the files to the WORKDIR with COPY . .
+And finally, we start our app with CMD [“npm”, “start”]</p>
+
+<p>Your Dockerfile should look like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM node:alpine
+
+WORKDIR <span class="s1">'/app'</span>
+
+COPY package.json <span class="nb">.</span>
+
+RUN npm <span class="nb">install
+
+</span>COPY <span class="nb">.</span> <span class="nb">.</span>
+
+CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+</code></pre></div></div>
+
+<h1 id="running-the-app">Running the app</h1>
+<p>Let’s run the app and see what happens. If you paid attention to the code, you may have read that line 2 on our index.js says <code class="highlighter-rouge">const redis = require('redis');</code>
+This means that our app needs redis to run properly. Most likely our app will fail when we try to run it, but don’t worry, I got you covered. I’m just showing you some common mistakes you might run into when creating your own apps.
+Let’s build the image with docker build.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~/docker/node-visits-app  chuleh ✗                                              5d ✖
+▶ docker build <span class="nt">-t</span> chuleh/node-visits-app <span class="nb">.</span>
+Sending build context to Docker daemon  4.096kB
+Step 1/6 : FROM node:alpine
+ <span class="nt">---</span><span class="o">&gt;</span> 09084e4ff58d
+Step 2/6 : WORKDIR <span class="s1">'/app'</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> e4c764a3b068
+Step 3/6 : COPY package.json <span class="nb">.</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> 56da628b91ed
+Step 4/6 : RUN npm <span class="nb">install</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Using cache
+ <span class="nt">---</span><span class="o">&gt;</span> fa9df3429e73
+Step 5/6 : COPY <span class="nb">.</span> <span class="nb">.</span>
+ <span class="nt">---</span><span class="o">&gt;</span> dd290ca9fd71
+Step 6/6 : CMD <span class="o">[</span><span class="s2">"npm"</span>, <span class="s2">"start"</span><span class="o">]</span>
+ <span class="nt">---</span><span class="o">&gt;</span> Running <span class="k">in </span>a0b535fd2b51
+Removing intermediate container a0b535fd2b51
+ <span class="nt">---</span><span class="o">&gt;</span> 13384ec271c7
+Successfully built 13384ec271c7
+Successfully tagged chuleh/node-visits-app:latest
+</code></pre></div></div>
+
+<p>Once the image has been built, it’s time to run it.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~/docker/node-visits-app  chuleh ✗                                              5d ✖
+▶ docker run chuleh/node-visits-app
+
+<span class="o">&gt;</span> @ start /app
+<span class="o">&gt;</span> node index.js
+
+Listening on port 8081
+events.js:173
+      throw er<span class="p">;</span> // Unhandled <span class="s1">'error'</span> event
+      ^
+
+Error: Redis connection to redis-server:6379 failed - getaddrinfo ENOTFOUND redis-server redis-server:6379
+    at GetAddrInfoReqWrap.onlookup <span class="o">[</span>as oncomplete] <span class="o">(</span>dns.js:58:26<span class="o">)</span>
+Emitted <span class="s1">'error'</span> event at:
+    at RedisClient.on_error <span class="o">(</span>/app/node_modules/redis/index.js:406:14<span class="o">)</span>
+    at Socket.&lt;anonymous&gt; <span class="o">(</span>/app/node_modules/redis/index.js:279:14<span class="o">)</span>
+    at Socket.emit <span class="o">(</span>events.js:197:13<span class="o">)</span>
+    at emitErrorNT <span class="o">(</span>internal/streams/destroy.js:91:8<span class="o">)</span>
+    at emitErrorAndCloseNT <span class="o">(</span>internal/streams/destroy.js:59:3<span class="o">)</span>
+    at processTicksAndRejections <span class="o">(</span>internal/process/next_tick.js:76:17<span class="o">)</span>
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! @ start: <span class="sb">`</span>node index.js<span class="sb">`</span>
+npm ERR! Exit status 1
+npm ERR!
+npm ERR! Failed at the @ start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A <span class="nb">complete </span>log of this run can be found <span class="k">in</span>:
+npm ERR!     /root/.npm/_logs/2019-04-02T17_15_23_563Z-debug.log
+</code></pre></div></div>
+<p>As it was expected, our app failed. Why’s this? Let’s take a look at the log.
+It seems that in wants to start, but then we come across this line:
+<code class="highlighter-rouge">Error: Redis connection to redis-server:6379 failed - getaddrinfo ENOTFOUND</code>.
+Clearly, our app need the redis server to connect to. Let’s take a look at that in the next section.</p>
+
+<h1 id="writing-the-docker-compose-file">Writing the docker-compose file</h1>
+<p>As we saw before, our nodejs app can’t run without redis. Now you might be thinking that we could create a new redis app and link them together through the CLI. And you wouldn’t be wrong, but let me tell you something, the syntax to link containers from the CLI is awful.
+That’s why we’ll look into <code class="highlighter-rouge">docker-compose</code>. This a command that already comes with Docker, so it should be installed by default in your system. What docker-compose allows us to, is to automate the writing from the CLI specifying it into a file which, as you may have guessed, it’s called <code class="highlighter-rouge">docker-compose.yml</code>.
+This docker-compose file will do all the networking for us and will run the containers as well.
+So what we are going to do is the following:</p>
+<ul>
+  <li>tell docker to run our redis server</li>
+  <li>tell docker to run our nodejs app</li>
+  <li>map the ports to have access to the app.</li>
+</ul>
+
+<p>All of this, will be done using the docker-compose syntax.</p>
+
+<p>Open up your text editor and create a new file called <code class="highlighter-rouge">docker-compose.yml</code>.
+Let’s start hacking, the first line will always be <code class="highlighter-rouge">version</code>. This tells the version of docker-compose we’ll use.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
+</code></pre></div></div>
+<p>Thats your first line.
+Now we want to tell docker what it should run. That means to tell docker to run our containers. Remember, we’ll run redis and the nodejs app. We’re going to use the word <code class="highlighter-rouge">services</code> to tell docker to run our containers. Then, we’ll type in a name related to the service and finally we’ll tell docker what image to use.
+Type in the following:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis-server</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s1">'</span><span class="s">redis'</span>
+</code></pre></div></div>
+<p>I named it redis-server, for a good reason. If you looked at the code from the nodejs app, it says: <code class="highlighter-rouge">host:'redis-server'</code>. This is the hostname the app will use to connect to. If you change the name of the service, you need to change the name on the nodejs app as well.
+Now it’s time for the node app. Be <strong>very</strong> careful with the indentation, the next service we’ll run is the nodejs app, this should be aligned at the same level of <code class="highlighter-rouge">redis-server</code>.
+We’re going to add another directive, the <code class="highlighter-rouge">build</code> one. We want docker to use the Dockerfile we created with our app, so for that, we’ll tell docker <code class="highlighter-rouge">build: .</code>, that means to use the Dockerfile in the current directory.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis-server</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s1">'</span><span class="s">redis'</span>
+  <span class="na">node-app</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+</code></pre></div></div>
+<p>And finally, we need to map the ports for our app. So we’ll use the <code class="highlighter-rouge">ports</code> directive and write an <code class="highlighter-rouge">array</code>. This would be the same as running our container with docker run -p localport:containerport.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis-server</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s1">'</span><span class="s">redis'</span>
+  <span class="na">node-app</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">ports</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="s2">"</span><span class="s">4000:8081"</span>
+</code></pre></div></div>
+<p>I used port 4000 as the local port, but it could’ve been any other one.</p>
+
+<h1 id="running-our-docker-composeyml">Running our docker-compose.yml</h1>
+<p>Now it’s time to run our docker-compose file. Believe it or not, that’s all there is to it. Just by defining our containers inside the docker-compose.yml, docker will create a network between our two containers son they can communicate with each other.
+To run our docker-compose file, just type <code class="highlighter-rouge">docker-compose up</code>. Of course, this has to be done in the directory where the <code class="highlighter-rouge">docker-compose.yml</code> file is located, otherwise it will give an error.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~/docker/node-visits-app  chuleh ✗                                              5d ⚑
+▶ docker-compose up
+Starting node-visits-app_node-app_1     ... <span class="k">done
+</span>Starting node-visits-app_redis-server_1 ... <span class="k">done
+</span>Attaching to node-visits-app_redis-server_1, node-visits-app_node-app_1
+redis-server_1  | 1:C 02 Apr 2019 19:15:38.821 <span class="c"># oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span>
+redis-server_1  | 1:C 02 Apr 2019 19:15:38.821 <span class="c"># Redis version=5.0.4, bits=64, commit=00000000, modified=0, pid=1, just started</span>
+redis-server_1  | 1:C 02 Apr 2019 19:15:38.821 <span class="c"># Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf</span>
+redis-server_1  | 1:M 02 Apr 2019 19:15:38.824 <span class="k">*</span> Running <span class="nv">mode</span><span class="o">=</span>standalone, <span class="nv">port</span><span class="o">=</span>6379.
+redis-server_1  | 1:M 02 Apr 2019 19:15:38.825 <span class="c"># WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span>
+redis-server_1  | 1:M 02 Apr 2019 19:15:38.825 <span class="c"># Server initialized</span>
+redis-server_1  | 1:M 02 Apr 2019 19:15:38.825 <span class="c"># WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.</span>
+redis-server_1  | 1:M 02 Apr 2019 19:15:38.826 <span class="k">*</span> DB loaded from disk: 0.002 seconds
+redis-server_1  | 1:M 02 Apr 2019 19:15:38.826 <span class="k">*</span> Ready to accept connections
+node-app_1      |
+node-app_1      | <span class="o">&gt;</span> @ start /app
+node-app_1      | <span class="o">&gt;</span> node index.js
+node-app_1      |
+node-app_1      | Listening on port 8081
+</code></pre></div></div>
+
+<p>If we take a look at the console output, we can see two things: first, our database says <code class="highlighter-rouge">ready to accept connections</code> and our nodejs app says <code class="highlighter-rouge">Listening on port 8081</code>.</p>
+
+<p>I will open another tab on my terminal and see curl localhost:4000. Remember, it’s the local port the one you curl, not the container port.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>▶ curl localhost:4000
+Number of visits is 0
+</code></pre></div></div>
+
+<p>Seems to be working. I’ll curl another time and it should say 1.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>▶ curl localhost:4000
+Number of visits is 1
+</code></pre></div></div>
+
+<p>Perfect. We’ve got our app running and the networking between the two containers has been taken care of by docker. Go back to the docker-compose tab and press ctrl-c to bring down the app. If you ran it detached, just type <code class="highlighter-rouge">docker-compose down</code>.</p>
+
+<p>And that’s our docker-compose. This ends today’s lesson. As always, stay tuned for in the next lesson we will look at how docker integrates in our workflow, we’ll create a complete CI/CD pipeline with docker included.</p>
+
+<p><code class="highlighter-rouge">:wq</code></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-04-06T00:00:00-03:00">April 06, 2019</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker%3A+Docker+Compose%20http%3A%2F%2Flocalhost%3A4000%2FDocker-Docker-compose%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2FDocker-Docker-compose%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2FDocker-Docker-compose%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/Docker-WORKDIR-and-rebuilds/" class="pagination--pager" title="Docker: Workdir And Rebuilds
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-WORKDIR-and-rebuilds/" rel="permalink">Docker: Workdir And Rebuilds
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  10 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we will continue from where we left off with our Docker series. We’re going to work with the Dockerfile from our previous lesson and work...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-diving-deeper-into-Dockerfile/" rel="permalink">Docker: Diving Deeper Into Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  4 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s lecture we will continue with our Dockerfile tutorial. In our previous lecture we created a Dockerfile for our redis-server and saw how to bui...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-what-is-a-Dockerfile/" rel="permalink">Docker: What Is A Dockerfile
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to take a look at something completely new: Dockerfile. Until now we have been using community images that just worked, but w...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/Docker-bind-mounts-and-volumes/" rel="permalink">Docker: Bind Mounts And Volumes
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Hi, in today’s post we’re going to continue with our docker series. If you’re new to docker I suggest reading at least my Intro to Docker.
+In this lecture we...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 chule. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
