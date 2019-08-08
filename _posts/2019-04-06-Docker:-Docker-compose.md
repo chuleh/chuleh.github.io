@@ -51,6 +51,7 @@ Writing the Dockerfile
 Good, now that we have the two files for the node app we can focus on our Dockerfile. It will be very similar to the one we've been working with.
 This should be pretty straight forward, but just in case, let's go over it once again.
 The first line will be FROM, this is mandatory. There we will specify the base image we will use, in this case it's node:alpine.
+
 Next we will specify our WORKDIR, in my case I'll use '/app', but remember this can be anything you want.
 Then, as we learned in our [previous lesson]({% post_url 2019-04-01-Docker:-WORKDIR-and-rebuilds %}) we need to copy our package.json into the WORKDIR, so type in COPY package.json .
 RUN npm install comes next.
