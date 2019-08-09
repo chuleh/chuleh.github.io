@@ -143,10 +143,10 @@ footer:
       # url:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "github.com/chuleh"
+      url: "chuleh"
     - label: "GitLab"
       icon: "fab fa-fw fa-gitlab"
-      url: "gitlab.com/chuleh"
+      url: "chuleh"
     - label: "Bitbucket"
       icon: "fab fa-fw fa-bitbucket"
       # url:
